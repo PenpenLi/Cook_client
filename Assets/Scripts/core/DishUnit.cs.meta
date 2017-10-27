@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d8eb9f3696fa27c46b76fb4536270811
+timeCreated: 1509093943
+licenseType: Pro
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - bg: {instanceID: 0}
+  - matResource: {fileID: 2100000, guid: 5bf5fcd7e12085a45936c486f5acde89, type: 2}
+  - animator: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
