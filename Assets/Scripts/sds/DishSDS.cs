@@ -3,10 +3,11 @@
 public class DishSDS : CsvBase, IDishSDS
 {
     public float prepareTime;
-    public float decreaseValue;
+    public float prepareDecreaseValue;
     public float cookTime;
-    public float exceedTime;
     public float optimizedTime;
+    public float optimizeDecreaseValue;
+    public float exceedTime;
     public bool isUniversal;
     public int maxNum;
     public int money;
@@ -22,9 +23,9 @@ public class DishSDS : CsvBase, IDishSDS
         return prepareTime;
     }
 
-    public float GetDecreaseValue()
+    public float GetPrepareDecreaseValue()
     {
-        return decreaseValue;
+        return prepareDecreaseValue;
     }
 
     public float GetCookTime()
@@ -32,14 +33,19 @@ public class DishSDS : CsvBase, IDishSDS
         return cookTime;
     }
 
-    public float GetExceedTime()
-    {
-        return exceedTime;
-    }
-
     public float GetOptimizeTime()
     {
         return optimizedTime;
+    }
+
+    public float GetOptimizeDecreaseValue()
+    {
+        return optimizeDecreaseValue;
+    }
+
+    public float GetExceedTime()
+    {
+        return exceedTime;
     }
 
     public bool GetIsUniversal()
