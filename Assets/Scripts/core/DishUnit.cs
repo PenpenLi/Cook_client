@@ -16,13 +16,10 @@ public class DishUnit : MonoBehaviour {
 
     private Material mat;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    private float time;
+
+	public void Init(float _time)
+    {
+        time = _time;
+    }
 }

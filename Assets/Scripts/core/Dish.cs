@@ -7,13 +7,10 @@ public class Dish : MonoBehaviour {
     [SerializeField]
     private DishUnit[] units;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    private DishSDS sds;
+
+    public void Init(DishSDS _sds)
+    {
+        sds = _sds;
+    }
 }
