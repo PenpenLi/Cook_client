@@ -18,7 +18,7 @@ public class DishResultUnit : MonoBehaviour
 
     private float exceedTime;
 
-    public void Init(DishResult _dishResult)
+    public void Init(DishResult _dishResult, bool _showTime)
     {
         dishResult = _dishResult;
 
@@ -26,7 +26,16 @@ public class DishResultUnit : MonoBehaviour
 
         TextureFactory.Instance.GetTexture<Sprite>((dishResult.sds as DishSDS).icon, GetSprite, true);
 
-        RefreshTime();
+        if (_showTime)
+        {
+            RefreshTime();
+        }
+        else
+        {
+            timeIcon.gameObject.SetActive(false);
+
+            bg.raycastTarget = false;
+        }
 
         RefreshIsOptimized();
     }

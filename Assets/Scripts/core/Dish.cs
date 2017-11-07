@@ -187,7 +187,7 @@ public class Dish : MonoBehaviour
 
         resultUnit = go.GetComponent<DishResultUnit>();
 
-        resultUnit.Init(dishData.result);
+        resultUnit.Init(dishData.result, true);
 
         resultGo.SetActive(false);
     }
