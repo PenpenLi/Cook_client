@@ -8,6 +8,8 @@ public class Dish : MonoBehaviour
 
     public static float MAX_TIME;
 
+    public static float TICK_SPAN;
+
     public static void InitData()
     {
         Dictionary<int, DishSDS> dic = StaticData.GetDic<DishSDS>();
@@ -25,6 +27,8 @@ public class Dish : MonoBehaviour
                 MAX_TIME = time;
             }
         }
+
+        TICK_SPAN = 1.0f / CookConst.TICK_NUM_PER_SECOND;
     }
 
     [SerializeField]
@@ -59,7 +63,10 @@ public class Dish : MonoBehaviour
 
         if (dishData.sds.GetCookTime() > 0)
         {
-            cook.gameObject.SetActive(true);
+            if (!cook.gameObject.activeSelf)
+            {
+                cook.gameObject.SetActive(true);
+            }
 
             cook.Init(dishData.sds.GetCookTime());
 
@@ -71,12 +78,17 @@ public class Dish : MonoBehaviour
         }
         else
         {
-            cook.gameObject.SetActive(false);
+            if (cook.gameObject.activeSelf)
+            {
+                cook.gameObject.SetActive(false);
+            }
         }
 
         optimize.Init(dishData.sds.GetOptimizeTime());
 
         float optimizeLength = dishData.sds.GetOptimizeTime() / MAX_TIME * MAX_LENGTH;
+
+        Debug.Log("optimizeLength:" + optimizeLength + "     " + dishData.sds.GetOptimizeTime());
 
         (optimize.transform as RectTransform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, optimizeLength);
 
@@ -91,7 +103,7 @@ public class Dish : MonoBehaviour
 
                 prepare.SetTime(0);
 
-                if (cook.gameObject.activeSelf)
+                if (dishData.sds.GetCookTime() > 0)
                 {
                     cook.SetTime(0);
                 }
@@ -104,7 +116,7 @@ public class Dish : MonoBehaviour
 
                 prepare.SetTime(dishData.time);
 
-                if (cook.gameObject.activeSelf)
+                if (dishData.sds.GetCookTime() > 0)
                 {
                     cook.SetTime(0);
                 }
@@ -127,7 +139,7 @@ public class Dish : MonoBehaviour
 
                 prepare.SetTime(0);
 
-                if (cook.gameObject.activeSelf)
+                if (dishData.sds.GetCookTime() > 0)
                 {
                     cook.SetTime(0);
                 }

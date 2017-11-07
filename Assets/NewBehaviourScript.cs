@@ -27,7 +27,7 @@ public class NewBehaviourScript : MonoBehaviour {
 
         dish.Init(dd);
 
-        Time.fixedDeltaTime = 1.0f / CookConst.TICK_NUM_PER_SECOND;
+        Time.fixedDeltaTime = Dish.TICK_SPAN;
     }
 
     void FixedUpdate()

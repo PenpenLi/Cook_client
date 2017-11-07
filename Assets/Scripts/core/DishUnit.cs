@@ -25,6 +25,8 @@ public class DishUnit : MonoBehaviour
 
     private bool hasFirstTime = false;
 
+    private bool isActive = false;
+
     private float texOffsetY;
 
     public void Init(float _time)
@@ -52,8 +54,10 @@ public class DishUnit : MonoBehaviour
 
         if (_time == 0)
         {
-            if (animator.gameObject.activeSelf)
+            if (isActive)
             {
+                isActive = false;
+
                 bg.material = null;
 
                 mat.SetTextureOffset("_MaskTex", new Vector2(1, texOffsetY));
@@ -63,8 +67,10 @@ public class DishUnit : MonoBehaviour
         }
         else
         {
-            if (!animator.gameObject.activeSelf)
+            if (!isActive)
             {
+                isActive = true;
+
                 bg.material = mat;
 
                 animator.gameObject.SetActive(true);
@@ -74,7 +80,7 @@ public class DishUnit : MonoBehaviour
 
             if (hasFirstTime)
             {
-                tweenID = SuperTween.Instance.To(mat.GetTextureOffset("_MaskTex").x, 1 - _time / time, 1 / CookConst.TICK_NUM_PER_SECOND, TweenTo, TweenOver);
+                tweenID = SuperTween.Instance.To(mat.GetTextureOffset("_MaskTex").x, 1 - _time / time, Dish.TICK_SPAN, TweenTo, TweenOver);
             }
             else
             {
@@ -103,7 +109,9 @@ public class DishUnit : MonoBehaviour
         StopTween();
 
         hasFirstTime = false;
-        
+
+        isActive = false;
+
         animator.gameObject.SetActive(false);
 
         bg.material = null;
