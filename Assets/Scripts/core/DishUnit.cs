@@ -24,6 +24,7 @@ public class DishUnit : MonoBehaviour
     public void Init(float _time)
     {
         time = _time;
+
     }
 
     void Start()

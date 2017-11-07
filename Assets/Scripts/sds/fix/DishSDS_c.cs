@@ -9,7 +9,7 @@ public class DishSDS_c {
         _csv.cookTime = _br.ReadSingle();
         _csv.exceedTime = _br.ReadSingle();
         _csv.optimizeDecreaseValue = _br.ReadSingle();
-        _csv.optimizedTime = _br.ReadSingle();
+        _csv.optimizeTime = _br.ReadSingle();
         _csv.prepareDecreaseValue = _br.ReadSingle();
         _csv.prepareTime = _br.ReadSingle();
     }

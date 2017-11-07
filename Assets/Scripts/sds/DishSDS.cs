@@ -5,7 +5,7 @@ public class DishSDS : CsvBase, IDishSDS
     public float prepareTime;
     public float prepareDecreaseValue;
     public float cookTime;
-    public float optimizedTime;
+    public float optimizeTime;
     public float optimizeDecreaseValue;
     public float exceedTime;
     public bool isUniversal;
@@ -35,7 +35,7 @@ public class DishSDS : CsvBase, IDishSDS
 
     public float GetOptimizeTime()
     {
-        return optimizedTime;
+        return optimizeTime;
     }
 
     public float GetOptimizeDecreaseValue()
