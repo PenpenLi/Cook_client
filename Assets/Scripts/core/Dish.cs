@@ -88,8 +88,6 @@ public class Dish : MonoBehaviour
 
         float optimizeLength = dishData.sds.GetOptimizeTime() / MAX_TIME * MAX_LENGTH;
 
-        Debug.Log("optimizeLength:" + optimizeLength + "     " + dishData.sds.GetOptimizeTime());
-
         (optimize.transform as RectTransform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, optimizeLength);
 
         (optimize.transform as RectTransform).anchoredPosition = new Vector2(prepareLength + cookLength, 0);

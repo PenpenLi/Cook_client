@@ -1,16 +1,23 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using Cook_lib;
 
-public class DishResultUnit : MonoBehaviour {
+public class DishResultUnit : MonoBehaviour
+{
+    [SerializeField]
+    private Image bg;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    [SerializeField]
+    private Image icon;
+
+    private DishResult dishResult;
+
+    public void Init(DishResult _dishResult)
+    {
+        dishResult = _dishResult;
+
+
+    }
 }
