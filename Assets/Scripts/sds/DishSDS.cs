@@ -1,6 +1,6 @@
 ﻿using Cook_lib;
 
-public class DishSDS : CsvBase, IDishSDS
+public partial class DishSDS : CsvBase, IDishSDS
 {
     public float prepareTime;
     public float prepareDecreaseValue;

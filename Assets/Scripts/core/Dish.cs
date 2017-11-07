@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using Cook_lib;
 
 public class Dish : MonoBehaviour
 {
@@ -28,6 +28,9 @@ public class Dish : MonoBehaviour
     }
 
     [SerializeField]
+    private DishContainer container;
+
+    [SerializeField]
     private DishUnit prepare;
 
     [SerializeField]
@@ -36,45 +39,102 @@ public class Dish : MonoBehaviour
     [SerializeField]
     private DishUnit optimize;
 
-    private DishSDS sds;
+    private DishData dishData;
 
-    public void Init(DishSDS _sds)
+    public void Init(DishData _dishData)
     {
-        sds = _sds;
+        dishData = _dishData;
 
-        float time = sds.prepareTime + sds.cookTime + sds.optimizeTime;
+        float time = dishData.sds.GetPrepareTime() + dishData.sds.GetCookTime() + dishData.sds.GetOptimizeTime();
 
-        (transform as RectTransform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, time / MAX_TIME * MAX_LENGTH);
+        (container.transform as RectTransform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, time / MAX_TIME * MAX_LENGTH);
 
-        prepare.Init(sds.prepareTime);
+        prepare.Init(dishData.sds.GetPrepareTime());
 
-        float prepareLength = sds.prepareTime / MAX_TIME * MAX_LENGTH;
+        float prepareLength = dishData.sds.GetPrepareTime() / MAX_TIME * MAX_LENGTH;
 
         (prepare.transform as RectTransform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, prepareLength);
 
         float cookLength = 0;
 
-        if (sds.cookTime > 0)
+        if (dishData.sds.GetCookTime() > 0)
         {
             cook.gameObject.SetActive(true);
 
-            cook.Init(sds.cookTime);
+            cook.Init(dishData.sds.GetCookTime());
 
-            cookLength = sds.cookTime / MAX_TIME * MAX_LENGTH;
+            cookLength = dishData.sds.GetCookTime() / MAX_TIME * MAX_LENGTH;
 
             (cook.transform as RectTransform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, cookLength);
 
             (cook.transform as RectTransform).anchoredPosition = new Vector2(prepareLength, 0);
         }
+        else
+        {
+            cook.gameObject.SetActive(false);
+        }
 
-        optimize.Init(sds.optimizeTime);
+        optimize.Init(dishData.sds.GetOptimizeTime());
 
-        float optimizeLength = sds.optimizeTime / MAX_TIME * MAX_LENGTH;
-
-        Debug.Log("optimizeLength:" + optimizeLength);
+        float optimizeLength = dishData.sds.GetOptimizeTime() / MAX_TIME * MAX_LENGTH;
 
         (optimize.transform as RectTransform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, optimizeLength);
 
         (optimize.transform as RectTransform).anchoredPosition = new Vector2(prepareLength + cookLength, 0);
+    }
+
+    public void Refresh()
+    {
+        switch (dishData.state)
+        {
+            case DishState.NULL:
+
+                prepare.SetTime(0);
+
+                if (cook.gameObject.activeSelf)
+                {
+                    cook.SetTime(0);
+                }
+
+                optimize.SetTime(0);
+
+                break;
+
+            case DishState.PREPAREING:
+
+                prepare.SetTime(dishData.time);
+
+                if (cook.gameObject.activeSelf)
+                {
+                    cook.SetTime(0);
+                }
+
+                optimize.SetTime(0);
+
+                break;
+
+            case DishState.COOKING:
+
+                prepare.SetTime(0);
+
+                cook.SetTime(dishData.time);
+
+                optimize.SetTime(0);
+
+                break;
+
+            default:
+
+                prepare.SetTime(0);
+
+                if (cook.gameObject.activeSelf)
+                {
+                    cook.SetTime(0);
+                }
+
+                optimize.SetTime(dishData.time);
+
+                break;
+        }
     }
 }
