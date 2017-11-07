@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using Cook_lib;
+using UnityEngine.UI;
+using textureFactory;
+using gameObjectFactory;
 
 public class Dish : MonoBehaviour
 {
@@ -43,7 +46,18 @@ public class Dish : MonoBehaviour
     [SerializeField]
     private DishUnit optimize;
 
+    [SerializeField]
+    private Image resultIcon;
+
+    [SerializeField]
+    private GameObject resultGo;
+
+    [SerializeField]
+    private RectTransform resultContainer;
+
     private DishData dishData;
+
+    private DishResultUnit resultUnit;
 
     public void Init(DishData _dishData)
     {
@@ -91,6 +105,18 @@ public class Dish : MonoBehaviour
         (optimize.transform as RectTransform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, optimizeLength);
 
         (optimize.transform as RectTransform).anchoredPosition = new Vector2(prepareLength + cookLength, 0);
+
+        TextureFactory.Instance.GetTexture<Sprite>((dishData.sds as DishSDS).icon, GetSprite, true);
+
+        if (dishData.result != null)
+        {
+            DishResultAppear();
+        }
+    }
+
+    private void GetSprite(Sprite _sp)
+    {
+        resultIcon.sprite = _sp;
     }
 
     public void Refresh()
@@ -146,5 +172,35 @@ public class Dish : MonoBehaviour
 
                 break;
         }
+
+        if (resultUnit != null)
+        {
+            resultUnit.RefreshTime();
+        }
+    }
+
+    public void DishResultAppear()
+    {
+        GameObject go = GameObjectFactory.Instance.GetGameObject("go", null);
+
+        go.transform.SetParent(resultContainer, false);
+
+        resultUnit = go.GetComponent<DishResultUnit>();
+
+        resultUnit.Init(dishData.result);
+
+        resultGo.SetActive(false);
+    }
+
+    public void DishResultDisappear()
+    {
+        Destroy(resultUnit.gameObject);
+
+        resultGo.SetActive(true);
+    }
+
+    public void DishResultBeOptimized()
+    {
+        resultUnit.RefreshIsOptimized();
     }
 }
