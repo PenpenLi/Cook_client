@@ -19,24 +19,24 @@ public class NewBehaviourScript : MonoBehaviour {
     {
         Debug.Log("loadover");
 
-        Dish.InitData();
+        //Dish.InitData();
 
-        dd = new DishData();
+        //dd = new DishData();
 
-        dd.sds = StaticData.GetData<DishSDS>(1);
+        //dd.sds = StaticData.GetData<DishSDS>(1);
 
-        dish.Init(dd);
+        //dish.Init(dd);
 
-        Time.fixedDeltaTime = Dish.TICK_SPAN;
+        //Time.fixedDeltaTime = Dish.TICK_SPAN;
     }
 
     void FixedUpdate()
     {
-        dd.state = DishState.PREPAREING;
+        //dd.state = DishState.PREPAREING;
 
-        dd.time++;
+        //dd.time++;
 
-        dish.Refresh();    
+        //dish.Refresh();    
     }
 
     // Update is called once per frame

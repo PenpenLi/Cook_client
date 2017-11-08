@@ -106,7 +106,7 @@ public class Dish : MonoBehaviour
 
         (optimize.transform as RectTransform).anchoredPosition = new Vector2(prepareLength + cookLength, 0);
 
-        TextureFactory.Instance.GetTexture<Sprite>((dishData.sds as DishSDS).icon, GetSprite, true);
+        TextureFactory.Instance.GetTexture<Sprite>("Assets/Resource/texture/" + (dishData.sds as DishSDS).icon + ".png", GetSprite, true);
 
         if (dishData.result != null)
         {
@@ -181,13 +181,13 @@ public class Dish : MonoBehaviour
 
     public void DishResultAppear()
     {
-        GameObject go = GameObjectFactory.Instance.GetGameObject("go", null);
+        GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/dishResult.prefab", null);
 
         go.transform.SetParent(resultContainer, false);
 
         resultUnit = go.GetComponent<DishResultUnit>();
 
-        resultUnit.Init(dishData.result, true);
+        resultUnit.Init(dishData.result);
 
         resultGo.SetActive(false);
     }

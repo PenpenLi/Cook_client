@@ -18,24 +18,15 @@ public class DishResultUnit : MonoBehaviour
 
     private float exceedTime;
 
-    public void Init(DishResult _dishResult, bool _showTime)
+    public void Init(DishResult _dishResult)
     {
         dishResult = _dishResult;
 
         exceedTime = dishResult.sds.GetExceedTime() * CookConst.TICK_NUM_PER_SECOND;
 
-        TextureFactory.Instance.GetTexture<Sprite>((dishResult.sds as DishSDS).icon, GetSprite, true);
+        TextureFactory.Instance.GetTexture<Sprite>("Assets/Resource/texture/" + (dishResult.sds as DishSDS).icon + ".png", GetSprite, true);
 
-        if (_showTime)
-        {
-            RefreshTime();
-        }
-        else
-        {
-            timeIcon.gameObject.SetActive(false);
-
-            bg.raycastTarget = false;
-        }
+        RefreshTime();
 
         RefreshIsOptimized();
     }
