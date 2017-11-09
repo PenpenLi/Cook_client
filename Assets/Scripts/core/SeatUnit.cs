@@ -39,4 +39,9 @@ public class SeatUnit : MonoBehaviour, IWorkerContainer
             workerUnit.container = this;
         }
     }
+
+    public bool GetWorker()
+    {
+        return workerUnit != null;
+    }
 }

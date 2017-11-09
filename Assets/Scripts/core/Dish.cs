@@ -199,7 +199,23 @@ public class Dish : MonoBehaviour, IWorkerContainer
 
         if (resultUnit != null)
         {
-            resultUnit.RefreshTime();
+            if (dishData.result == null)
+            {
+                DishResultDisappear();
+            }
+            else
+            {
+                resultUnit.RefreshTime();
+
+                resultUnit.RefreshIsOptimized();
+            }
+        }
+        else
+        {
+            if (dishData.result != null)
+            {
+                DishResultAppear();
+            }
         }
     }
 
@@ -216,16 +232,13 @@ public class Dish : MonoBehaviour, IWorkerContainer
         resultGo.SetActive(false);
     }
 
-    public void DishResultDisappear()
+    private void DishResultDisappear()
     {
         Destroy(resultUnit.gameObject);
 
-        resultGo.SetActive(true);
-    }
+        resultUnit = null;
 
-    public void DishResultBeOptimized()
-    {
-        resultUnit.RefreshIsOptimized();
+        resultGo.SetActive(true);
     }
 
     public void SetWorker(WorkerUnit _workerUnit)
