@@ -1,14 +1,17 @@
 ﻿using System.IO;
-using System.Collections.Generic;
 using UnityEngine;
 using Cook_lib;
 using System;
-using gameObjectFactory;
+using System.Collections.Generic;
 
 public class DishClientCore : MonoBehaviour, IClient
 {
+    public static float MAX_TIME;
+
+    public static float TICK_SPAN;
+
     [SerializeField]
-    private RectTransform requirementContainer;
+    private RequirementContainer requirementContainer;
 
     [SerializeField]
     private PlayerDataUnit mPlayerData;
@@ -18,10 +21,34 @@ public class DishClientCore : MonoBehaviour, IClient
 
     private Cook_client client;
 
-    private Dictionary<int, RequirementContainer> requirementList = new Dictionary<int, RequirementContainer>();
+    public int tick
+    {
+        get
+        {
+            return client.GetTick();
+        }
+    }
 
     void Awake()
     {
+        Dictionary<int, DishSDS> dic = StaticData.GetDic<DishSDS>();
+
+        IEnumerator<DishSDS> enumerator = dic.Values.GetEnumerator();
+
+        while (enumerator.MoveNext())
+        {
+            DishSDS sds = enumerator.Current;
+
+            float time = sds.prepareTime + sds.cookTime + sds.optimizeTime;
+
+            if (time > MAX_TIME)
+            {
+                MAX_TIME = time;
+            }
+        }
+
+        TICK_SPAN = 1.0f / CookConst.TICK_NUM_PER_SECOND;
+
         client = new Cook_client();
 
         client.Init(this);
@@ -29,6 +56,8 @@ public class DishClientCore : MonoBehaviour, IClient
         mPlayerData.Init(this, true);
 
         oPlayerData.Init(this, false);
+
+        requirementContainer.Init(this, client.GetRequirement());
     }
 
     public void RefreshData()
@@ -43,7 +72,7 @@ public class DishClientCore : MonoBehaviour, IClient
 
         oPlayerData.RefreshData(playerData);
 
-
+        requirementContainer.RefreshData();
     }
 
     public void SendData(MemoryStream _ms)
@@ -82,7 +111,7 @@ public class DishClientCore : MonoBehaviour, IClient
 
         oPlayerData.UpdateCallBack();
 
-
+        requirementContainer.UpdateCallBack();
     }
 
     private void Clear()
@@ -91,13 +120,6 @@ public class DishClientCore : MonoBehaviour, IClient
 
         oPlayerData.Clear();
 
-        IEnumerator<RequirementContainer> enumerator = requirementList.Values.GetEnumerator();
-
-        while (enumerator.MoveNext())
-        {
-            Destroy(enumerator.Current.gameObject);
-        }
-
-        requirementList.Clear();
+        requirementContainer.Clear();
     }
 }

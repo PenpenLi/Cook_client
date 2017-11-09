@@ -1,34 +1,150 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using Cook_lib;
 using gameObjectFactory;
+using superTween;
 
 public class RequirementContainer : MonoBehaviour
 {
-    private DishRequirement requirement;
+    [SerializeField]
+    private float max_length;
 
-    public void Init(DishRequirement _requirement)
+    [SerializeField]
+    private RectTransform container;
+
+    private DishClientCore core;
+
+    private Dictionary<int, DishRequirement> dataDic;
+
+    private Dictionary<int, RequirementUnitContainer> dic = new Dictionary<int, RequirementUnitContainer>();
+
+    private float moveDisPerTick;
+
+    private int tweenID = -1;
+
+    public void Init(DishClientCore _core, Dictionary<int, DishRequirement> _dataDic)
     {
-        requirement = _requirement;
+        core = _core;
 
-        int column = (requirement.dishArr.Length + 1) / 2;
+        dataDic = _dataDic;
 
-        (transform as RectTransform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, column * 35 + (column + 1) * 10);
+        moveDisPerTick = max_length / (CookConst.REQUIRE_EXCEED_TIME * CookConst.TICK_NUM_PER_SECOND);
+    }
 
-        for (int i = 0; i < requirement.dishArr.Length; i++)
+    public void RefreshData()
+    {
+        Refresh();
+
+        float x = -moveDisPerTick * core.tick;
+
+        container.anchoredPosition = new Vector2(x, 0);
+    }
+
+    public void UpdateCallBack()
+    {
+        Refresh();
+
+        StopTween();
+
+        tweenID = SuperTween.Instance.To(container.anchoredPosition.x, container.anchoredPosition.x - moveDisPerTick, DishClientCore.TICK_SPAN, To, Over);
+    }
+
+    private void Refresh()
+    {
+        IEnumerator<DishRequirement> enumerator = dataDic.Values.GetEnumerator();
+
+        while (enumerator.MoveNext())
         {
-            GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/requirementUnit.prefab", null);
+            DishRequirement requirement = enumerator.Current;
 
-            RequirementUnit unit = go.GetComponent<RequirementUnit>();
+            RequirementUnitContainer unit;
 
-            unit.Init(requirement.dishArr[i]);
+            if (!dic.TryGetValue(requirement.uid, out unit))
+            {
+                GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/requirement.prefab", null);
 
-            go.transform.SetParent(transform, false);
+                go.transform.SetParent(container, false);
 
-            float x = 10 + i / 2 * 45;
+                unit = go.GetComponent<RequirementUnitContainer>();
 
-            float y = 10 + i % 2 * 45;
+                unit.Init(core, requirement);
 
-            (go.transform as RectTransform).anchoredPosition = new Vector2(x, y);
+                dic.Add(requirement.uid, unit);
+
+                int bornTick = core.tick - requirement.time;
+
+                float x = moveDisPerTick * bornTick + max_length;
+
+                (unit.transform as RectTransform).anchoredPosition = new Vector2(x, 0);
+            }
         }
+
+        List<int> delList = null;
+
+        IEnumerator<int> enumerator2 = dic.Keys.GetEnumerator();
+
+        while (enumerator2.MoveNext())
+        {
+            if (!dataDic.ContainsKey(enumerator2.Current))
+            {
+                if (delList == null)
+                {
+                    delList = new List<int>();
+                }
+
+                delList.Add(enumerator2.Current);
+            }
+        }
+
+        if (delList != null)
+        {
+            for (int i = 0; i < delList.Count; i++)
+            {
+                int uid = delList[i];
+
+                Disappear(dic[uid]);
+
+                dic.Remove(uid);
+            }
+        }
+    }
+
+    private void To(float _v)
+    {
+        container.anchoredPosition = new Vector2(_v, 0);
+    }
+
+    private void Over()
+    {
+        tweenID = -1;
+    }
+
+    private void StopTween()
+    {
+        if (tweenID != -1)
+        {
+            SuperTween.Instance.Remove(tweenID);
+
+            tweenID = -1;
+        }
+    }
+
+    private void Disappear(RequirementUnitContainer _unit)
+    {
+        Destroy(_unit.gameObject);
+    }
+
+    public void Clear()
+    {
+        container.anchoredPosition = Vector2.zero;
+
+        IEnumerator<RequirementUnitContainer> enumerator = dic.Values.GetEnumerator();
+
+        while (enumerator.MoveNext())
+        {
+            Destroy(enumerator.Current.gameObject);
+        }
+
+        dic.Clear();
     }
 }

@@ -63,13 +63,18 @@ public class DishResultContainer : MonoBehaviour
         {
             if (dishResultArr[index] == null)
             {
-                Clear();
+                Disappear();
             }
             else
             {
                 result.RefreshTime();
             }
         }
+    }
+
+    private void Disappear()
+    {
+        Clear();
     }
 
     public void Clear()

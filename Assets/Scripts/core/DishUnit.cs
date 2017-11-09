@@ -80,7 +80,7 @@ public class DishUnit : MonoBehaviour
 
             if (hasFirstTime)
             {
-                tweenID = SuperTween.Instance.To(mat.GetTextureOffset("_MaskTex").x, 1 - _time / time, Dish.TICK_SPAN, TweenTo, TweenOver);
+                tweenID = SuperTween.Instance.To(mat.GetTextureOffset("_MaskTex").x, 1 - _time / time, DishClientCore.TICK_SPAN, TweenTo, TweenOver);
             }
             else
             {

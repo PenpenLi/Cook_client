@@ -9,31 +9,6 @@ public class Dish : MonoBehaviour, IWorkerContainer
 {
     public const float MAX_LENGTH = 360;
 
-    public static float MAX_TIME;
-
-    public static float TICK_SPAN;
-
-    public static void InitData()
-    {
-        Dictionary<int, DishSDS> dic = StaticData.GetDic<DishSDS>();
-
-        IEnumerator<DishSDS> enumerator = dic.Values.GetEnumerator();
-
-        while (enumerator.MoveNext())
-        {
-            DishSDS sds = enumerator.Current;
-
-            float time = sds.prepareTime + sds.cookTime + sds.optimizeTime;
-
-            if (time > MAX_TIME)
-            {
-                MAX_TIME = time;
-            }
-        }
-
-        TICK_SPAN = 1.0f / CookConst.TICK_NUM_PER_SECOND;
-    }
-
     [SerializeField]
     private DishContainer container;
 
@@ -89,11 +64,11 @@ public class Dish : MonoBehaviour, IWorkerContainer
 
         float time = dishData.sds.GetPrepareTime() + dishData.sds.GetCookTime() + dishData.sds.GetOptimizeTime();
 
-        (container.transform as RectTransform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, time / MAX_TIME * MAX_LENGTH);
+        (container.transform as RectTransform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, time / DishClientCore.MAX_TIME * MAX_LENGTH);
 
         prepare.Init(dishData.sds.GetPrepareTime());
 
-        float prepareLength = dishData.sds.GetPrepareTime() / MAX_TIME * MAX_LENGTH;
+        float prepareLength = dishData.sds.GetPrepareTime() / DishClientCore.MAX_TIME * MAX_LENGTH;
 
         (prepare.transform as RectTransform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, prepareLength);
 
@@ -108,7 +83,7 @@ public class Dish : MonoBehaviour, IWorkerContainer
 
             cook.Init(dishData.sds.GetCookTime());
 
-            cookLength = dishData.sds.GetCookTime() / MAX_TIME * MAX_LENGTH;
+            cookLength = dishData.sds.GetCookTime() / DishClientCore.MAX_TIME * MAX_LENGTH;
 
             (cook.transform as RectTransform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, cookLength);
 
@@ -124,7 +99,7 @@ public class Dish : MonoBehaviour, IWorkerContainer
 
         optimize.Init(dishData.sds.GetOptimizeTime());
 
-        float optimizeLength = dishData.sds.GetOptimizeTime() / MAX_TIME * MAX_LENGTH;
+        float optimizeLength = dishData.sds.GetOptimizeTime() / DishClientCore.MAX_TIME * MAX_LENGTH;
 
         (optimize.transform as RectTransform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, optimizeLength);
 

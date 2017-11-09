@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using Cook_lib;
 using textureFactory;
+using superTween;
 
 public class DishResultUnit : MonoBehaviour
 {
@@ -18,6 +19,8 @@ public class DishResultUnit : MonoBehaviour
 
     private float exceedTime;
 
+    private int tweenID = -1;
+
     public void Init(DishResult _dishResult)
     {
         dishResult = _dishResult;
@@ -26,7 +29,7 @@ public class DishResultUnit : MonoBehaviour
 
         TextureFactory.Instance.GetTexture<Sprite>("Assets/Resource/texture/" + (dishResult.sds as DishSDS).icon + ".png", GetSprite, true);
 
-        RefreshTime();
+        timeIcon.fillAmount = dishResult.time / exceedTime;
 
         RefreshIsOptimized();
     }
@@ -38,7 +41,31 @@ public class DishResultUnit : MonoBehaviour
 
     public void RefreshTime()
     {
+        StopTween();
+
+        tweenID = SuperTween.Instance.To(timeIcon.fillAmount, dishResult.time / exceedTime, DishClientCore.TICK_SPAN, To, Over);
+
         timeIcon.fillAmount = dishResult.time / exceedTime;
+    }
+
+    private void To(float _v)
+    {
+        timeIcon.fillAmount = _v;
+    }
+
+    private void Over()
+    {
+        tweenID = -1;
+    }
+
+    private void StopTween()
+    {
+        if (tweenID != -1)
+        {
+            SuperTween.Instance.Remove(tweenID);
+
+            tweenID = -1;
+        }
     }
 
     public void RefreshIsOptimized()
