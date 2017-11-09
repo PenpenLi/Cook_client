@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using textureFactory;
 using gameObjectFactory;
 
-public class Dish : MonoBehaviour
+public class Dish : MonoBehaviour, IWorkerContainer
 {
     public const float MAX_LENGTH = 360;
 
@@ -55,13 +55,37 @@ public class Dish : MonoBehaviour
     [SerializeField]
     private RectTransform resultContainer;
 
+    [SerializeField]
+    private RectTransform workerContainer;
+
+    [SerializeField]
+    private Graphic[] controlGraphic;
+
+    private DishClientCore core;
+
     private DishData dishData;
+
+    private int index;
 
     private DishResultUnit resultUnit;
 
-    public void Init(DishData _dishData)
+    private WorkerUnit workerUnit;
+
+    public void Init(DishClientCore _core, DishData _dishData, int _index, bool _canControl)
     {
+        core = _core;
+
         dishData = _dishData;
+
+        index = _index;
+
+        if (!_canControl)
+        {
+            for (int i = 0; i < controlGraphic.Length; i++)
+            {
+                controlGraphic[i].raycastTarget = false;
+            }
+        }
 
         float time = dishData.sds.GetPrepareTime() + dishData.sds.GetCookTime() + dishData.sds.GetOptimizeTime();
 
@@ -202,5 +226,24 @@ public class Dish : MonoBehaviour
     public void DishResultBeOptimized()
     {
         resultUnit.RefreshIsOptimized();
+    }
+
+    public void SetWorker(WorkerUnit _workerUnit)
+    {
+        workerUnit = _workerUnit;
+
+        if (workerUnit != null)
+        {
+            workerUnit.transform.SetParent(workerContainer, false);
+
+            (workerUnit.transform as RectTransform).anchoredPosition = Vector2.zero;
+
+            if (workerUnit.container != null)
+            {
+                workerUnit.container.SetWorker(null);
+            }
+
+            workerUnit.container = this;
+        }
     }
 }

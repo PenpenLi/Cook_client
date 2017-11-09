@@ -1,21 +1,35 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using textureFactory;
+using Cook_lib;
 
 public class DishResultContainer : MonoBehaviour
 {
     [SerializeField]
     private Image bg;
 
+    private DishClientCore core;
+
+    private int index;
+
     private DishResultUnit result;
 
-    public void Init(bool _b)
+    public void Init(DishClientCore _core, int _index, bool _canControl)
     {
-        string path = _b ? "Assets/Resource/texture/a.png" : "Assets/Resource/texture/b.png";
+        core = _core;
+
+        index = _index;
+
+        bool b = CookConst.RESULT_STATE[index];
+
+        string path = b ? "Assets/Resource/texture/a.png" : "Assets/Resource/texture/b.png";
 
         TextureFactory.Instance.GetTexture<Sprite>(path, GetSprite, true);
+
+        if (!_canControl)
+        {
+            bg.raycastTarget = false;
+        }
     }
 
     private void GetSprite(Sprite _sp)
@@ -33,6 +47,16 @@ public class DishResultContainer : MonoBehaviour
         if (result != null)
         {
             result.RefreshTime();
+        }
+    }
+
+    public void Clear()
+    {
+        if (result != null)
+        {
+            Destroy(result.gameObject);
+
+            result = null;
         }
     }
 }
