@@ -28,7 +28,7 @@ public class RequirementUnitContainer : ControlUnit
 
             float x = 10 + i / 2 * 45;
 
-            float y = 10 - i % 2 * 45;
+            float y = -10 - i % 2 * 45;
 
             (go.transform as RectTransform).anchoredPosition = new Vector2(x, y);
         }

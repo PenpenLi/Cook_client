@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Cook_lib;
 using UnityEngine.UI;
 using textureFactory;
@@ -11,6 +10,9 @@ public class Dish : MonoBehaviour, IWorkerContainer
 
     [SerializeField]
     private DishContainer container;
+
+    [SerializeField]
+    private DishResultBt dishResultBt;
 
     [SerializeField]
     private DishUnit prepare;
@@ -51,6 +53,8 @@ public class Dish : MonoBehaviour, IWorkerContainer
         index = _index;
 
         container.Init(_core);
+
+        dishResultBt.Init(_core);
 
         if (!_canControl)
         {
