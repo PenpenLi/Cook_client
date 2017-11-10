@@ -100,7 +100,7 @@ public class PlayerDataUnit : MonoBehaviour
 
             go.transform.SetParent(dishContainer, false);
 
-            (go.transform as RectTransform).anchoredPosition = new Vector2(0, i * dishGap);
+            (go.transform as RectTransform).anchoredPosition = new Vector2(0, -i * dishGap);
 
             Dish dish = go.GetComponent<Dish>();
 

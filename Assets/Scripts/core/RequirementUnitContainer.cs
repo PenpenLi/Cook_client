@@ -2,15 +2,13 @@
 using Cook_lib;
 using gameObjectFactory;
 
-public class RequirementUnitContainer : MonoBehaviour
+public class RequirementUnitContainer : ControlUnit
 {
     private DishRequirement requirement;
 
-    private DishClientCore core;
-
     public void Init(DishClientCore _core, DishRequirement _requirement)
     {
-        core = _core;
+        Init(_core);
 
         requirement = _requirement;
 
@@ -30,7 +28,7 @@ public class RequirementUnitContainer : MonoBehaviour
 
             float x = 10 + i / 2 * 45;
 
-            float y = 10 + i % 2 * 45;
+            float y = 10 - i % 2 * 45;
 
             (go.transform as RectTransform).anchoredPosition = new Vector2(x, y);
         }

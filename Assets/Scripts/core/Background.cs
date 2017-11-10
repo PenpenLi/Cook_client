@@ -1,4 +1,4 @@
-﻿public class DishContainer : ControlUnit
+﻿public class Background : ControlUnit
 {
     public new void Init(DishClientCore _core)
     {

@@ -97,7 +97,7 @@ public class DishClientCore : MonoBehaviour, IClient
     {
         if (_event is CommandChangeResultPos)
         {
-
+            CommandChangeResultPos command = (CommandChangeResultPos)_event;
         }
         else if (_event is CommandChangeWorkerPos)
         {
@@ -111,6 +111,13 @@ public class DishClientCore : MonoBehaviour, IClient
         {
 
         }
+    }
+
+    private void GetCommandChangeResultPos(CommandChangeResultPos _command)
+    {
+        PlayerDataUnit unit = _command.isMine == client.clientIsMine ? mPlayerData : oPlayerData;
+
+
     }
 
     public void UpdateCallBack()
@@ -139,5 +146,30 @@ public class DishClientCore : MonoBehaviour, IClient
     public void RequestRefreshData()
     {
         client.RefreshData();
+    }
+
+    public void OnPointerClick(ControlUnit _unit)
+    {
+        Debug.Log("OnPointerClick:" + _unit);
+    }
+
+    public void OnPointerDown(ControlUnit _unit)
+    {
+        Debug.Log("OnPointerDown:" + _unit);
+    }
+
+    public void OnPointerEnter(ControlUnit _unit)
+    {
+        Debug.Log("OnPointerEnter:" + _unit);
+    }
+
+    public void OnPointerExit(ControlUnit _unit)
+    {
+        Debug.Log("OnPointerExit:" + _unit);
+    }
+
+    public void OnPointerUp(ControlUnit _unit)
+    {
+        Debug.Log("OnPointerUp:" + _unit);
     }
 }

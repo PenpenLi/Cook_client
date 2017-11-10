@@ -2,14 +2,11 @@
 using UnityEngine.UI;
 using textureFactory;
 using Cook_lib;
-using gameObjectFactory;
 
-public class DishResultContainer : MonoBehaviour
+public class DishResultContainer : ControlUnit
 {
     [SerializeField]
     private Image bg;
-
-    private DishClientCore core;
 
     private int index;
 
@@ -19,7 +16,7 @@ public class DishResultContainer : MonoBehaviour
 
     public void Init(DishClientCore _core, int _index, bool _canControl)
     {
-        core = _core;
+        Init(_core);
 
         index = _index;
 

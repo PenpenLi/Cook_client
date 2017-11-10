@@ -1,12 +1,10 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class SeatUnit : MonoBehaviour, IWorkerContainer
+public class SeatUnit : ControlUnit, IWorkerContainer
 {
     [SerializeField]
     private Image img;
-
-    private DishClientCore core;
 
     private int index;
 
@@ -14,7 +12,7 @@ public class SeatUnit : MonoBehaviour, IWorkerContainer
 
     public void Init(DishClientCore _core, int _index, bool _canControl)
     {
-        core = _core;
+        Init(_core);
 
         index = _index;
 

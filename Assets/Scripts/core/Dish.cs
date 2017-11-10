@@ -36,8 +36,6 @@ public class Dish : MonoBehaviour, IWorkerContainer
     [SerializeField]
     private Graphic[] controlGraphic;
 
-    private DishClientCore core;
-
     private DishData dishData;
 
     private int index;
@@ -48,11 +46,11 @@ public class Dish : MonoBehaviour, IWorkerContainer
 
     public void Init(DishClientCore _core, DishData _dishData, int _index, bool _canControl)
     {
-        core = _core;
-
         dishData = _dishData;
 
         index = _index;
+
+        container.Init(_core);
 
         if (!_canControl)
         {
