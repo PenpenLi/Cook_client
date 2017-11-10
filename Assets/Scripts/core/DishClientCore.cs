@@ -21,6 +21,10 @@ public class DishClientCore : MonoBehaviour, IClient
 
     private Cook_client client;
 
+    private Action<MemoryStream> sendData;
+
+    private Action<MemoryStream, Action<BinaryReader>> sendDataWithReply;
+
     public int tick
     {
         get
@@ -29,8 +33,12 @@ public class DishClientCore : MonoBehaviour, IClient
         }
     }
 
-    void Awake()
+    public void Init(Action<MemoryStream> _sendData, Action<MemoryStream, Action<BinaryReader>> _sendDataWithReply)
     {
+        sendData = _sendData;
+
+        sendDataWithReply = _sendDataWithReply;
+
         Dictionary<int, DishSDS> dic = StaticData.GetDic<DishSDS>();
 
         IEnumerator<DishSDS> enumerator = dic.Values.GetEnumerator();
@@ -77,12 +85,12 @@ public class DishClientCore : MonoBehaviour, IClient
 
     public void SendData(MemoryStream _ms)
     {
-
+        sendData(_ms);
     }
 
     public void SendData(MemoryStream _ms, Action<BinaryReader> _callBack)
     {
-
+        sendDataWithReply(_ms, _callBack);
     }
 
     public void TriggerEvent(ValueType _event)
@@ -99,7 +107,7 @@ public class DishClientCore : MonoBehaviour, IClient
         {
 
         }
-        else
+        else if (_event is CommandCompleteRequirement)
         {
 
         }
@@ -121,5 +129,15 @@ public class DishClientCore : MonoBehaviour, IClient
         oPlayerData.Clear();
 
         requirementContainer.Clear();
+    }
+
+    public void GetPackage(BinaryReader _br)
+    {
+        client.ClientGetPackage(_br);
+    }
+
+    public void RequestRefreshData()
+    {
+        client.RefreshData();
     }
 }

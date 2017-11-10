@@ -218,20 +218,23 @@ public class Dish : MonoBehaviour, IWorkerContainer
 
     public void SetWorker(WorkerUnit _workerUnit)
     {
-        workerUnit = _workerUnit;
-
-        if (workerUnit != null)
+        if (workerUnit != _workerUnit)
         {
-            workerUnit.transform.SetParent(workerContainer, false);
+            workerUnit = _workerUnit;
 
-            (workerUnit.transform as RectTransform).anchoredPosition = Vector2.zero;
-
-            if (workerUnit.container != null)
+            if (workerUnit != null)
             {
-                workerUnit.container.SetWorker(null);
-            }
+                workerUnit.transform.SetParent(workerContainer, false);
 
-            workerUnit.container = this;
+                (workerUnit.transform as RectTransform).anchoredPosition = Vector2.zero;
+
+                if (workerUnit.container != null)
+                {
+                    workerUnit.container.SetWorker(null);
+                }
+
+                workerUnit.container = this;
+            }
         }
     }
 }

@@ -1,46 +1,125 @@
-﻿using System.Collections;
+﻿using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using Cook_lib;
+using gameObjectFactory;
+using System;
 
-public class NewBehaviourScript : MonoBehaviour {
+public class NewBehaviourScript : MonoBehaviour
+{
 
-    public Dish dish;
+    [SerializeField]
+    private DishClientCore core;
 
-    private DishData dd;
+    private int num;
 
-	// Use this for initialization
-	void Start () {
+    private Cook_server server = new Cook_server();
+
+    private static string[] strs = new string[]
+    {
+        "Assets/Resource/prefab/dish.prefab",
+        "Assets/Resource/prefab/dishResult.prefab",
+        "Assets/Resource/prefab/playerDataUnit.prefab",
+        "Assets/Resource/prefab/requirement.prefab",
+        "Assets/Resource/prefab/requirementContainer.prefab",
+        "Assets/Resource/prefab/requirementUnit.prefab",
+        "Assets/Resource/prefab/resultContainer.prefab",
+        "Assets/Resource/prefab/seat.prefab",
+        "Assets/Resource/prefab/workerUnit.prefab",
+    };
+
+    // Use this for initialization
+    void Awake()
+    {
+
+
 
         ResourceLoader.Load(LoadOver);
-	}
 
-    private void LoadOver()
+        GameObjectFactory.Instance.PreloadGameObjects(strs, LoadOver);
+
+        Time.fixedDeltaTime = (float)1 / CookConst.TICK_NUM_PER_SECOND;
+
+
+    }
+
+    private void ServerCallBack(bool _isMine, bool _isPush, MemoryStream _ms)
     {
-        Debug.Log("loadover");
+        if (_isMine)
+        {
+            _ms.Position = 0;
 
-        //Dish.InitData();
-
-        //dd = new DishData();
-
-        //dd.sds = StaticData.GetData<DishSDS>(1);
-
-        //dish.Init(dd);
-
-        //Time.fixedDeltaTime = Dish.TICK_SPAN;
+            if (_isPush)
+            {
+                using (BinaryReader br = new BinaryReader(_ms))
+                {
+                    core.GetPackage(br);
+                }
+            }
+            else
+            {
+                if (tmpCB != null)
+                {
+                    using (BinaryReader br = new BinaryReader(_ms))
+                    {
+                        tmpCB(br);
+                    }
+                }
+            }
+        }
     }
 
     void FixedUpdate()
     {
-        //dd.state = DishState.PREPAREING;
-
-        //dd.time++;
-
-        //dish.Refresh();    
+        server.ServerUpdate();
     }
 
-    // Update is called once per frame
-    void Update () {
-		
-	}
+    private void LoadOver()
+    {
+        num++;
+
+        if (num == 2)
+        {
+            Debug.Log("loadover");
+
+            ServerStart();
+
+            core.Init(SendData, SendDataWithReply);
+
+            core.RequestRefreshData();
+        }
+    }
+
+    private void SendData(MemoryStream _ms)
+    {
+        _ms.Position = 0;
+
+        using (BinaryReader br = new BinaryReader(_ms))
+        {
+            server.ServerGetPackage(true, br);
+        }
+    }
+
+    private Action<BinaryReader> tmpCB;
+
+    private void SendDataWithReply(MemoryStream _ms, Action<BinaryReader> _callBack)
+    {
+        tmpCB = _callBack;
+
+        _ms.Position = 0;
+
+        using (BinaryReader br = new BinaryReader(_ms))
+        {
+            server.ServerGetPackage(true, br);
+        }
+    }
+
+    private void ServerStart()
+    {
+        Cook_server.Init(StaticData.GetDic<DishSDS>());
+
+        server.ServerSetCallBack(ServerCallBack);
+
+        server.ServerStart(new List<int>() { 1, 2, 3, 4 }, new List<int>() { 1, 2, 3, 4 });
+    }
 }
