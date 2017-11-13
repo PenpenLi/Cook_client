@@ -19,6 +19,9 @@ public class DishClientCore : MonoBehaviour, IClient
     [SerializeField]
     private PlayerDataUnit oPlayerData;
 
+    [SerializeField]
+    private Background bg;
+
     private Cook_client client;
 
     private Action<MemoryStream> sendData;
@@ -66,6 +69,8 @@ public class DishClientCore : MonoBehaviour, IClient
         oPlayerData.Init(this, false);
 
         requirementContainer.Init(this, client.GetRequirement());
+
+        bg.Init(this);
     }
 
     public void RefreshData()
@@ -163,7 +168,16 @@ public class DishClientCore : MonoBehaviour, IClient
     {
         //Debug.Log("OnPointerDown:" + _unit);
 
-        enterUnit = downUnit = _unit;
+        if (_unit is Background)
+        {
+            ClickControlUnit(_unit);
+
+            downUnit = enterUnit = null;
+        }
+        else
+        {
+            enterUnit = downUnit = _unit;
+        }
 
         hasExit = false;
     }
@@ -208,15 +222,18 @@ public class DishClientCore : MonoBehaviour, IClient
         {
             //Debug.Log("OnPointerUp  hasExit:" + hasExit + "    downUnit:" + downUnit);
 
-            if (!hasExit && enterUnit == downUnit)
+            if (downUnit != null)
             {
-                ClickControlUnit(enterUnit);
-            }
-            else
-            {
-                if (downUnit != null && enterUnit != null && enterUnit != downUnit)
+                if (!hasExit && enterUnit == downUnit)
                 {
-                    DragControlUnit(downUnit, enterUnit);
+                    ClickControlUnit(enterUnit);
+                }
+                else
+                {
+                    if (enterUnit != null && enterUnit != downUnit)
+                    {
+                        DragControlUnit(downUnit, enterUnit);
+                    }
                 }
             }
 

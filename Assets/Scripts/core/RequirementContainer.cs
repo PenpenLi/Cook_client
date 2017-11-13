@@ -22,6 +22,8 @@ public class RequirementContainer : MonoBehaviour
 
     private int tweenID = -1;
 
+    private float fix;
+
     public void Init(DishClientCore _core, Dictionary<int, DishRequirement> _dataDic)
     {
         core = _core;
@@ -29,6 +31,12 @@ public class RequirementContainer : MonoBehaviour
         dataDic = _dataDic;
 
         moveDisPerTick = max_length / (CookConst.REQUIRE_EXCEED_TIME * CookConst.TICK_NUM_PER_SECOND);
+
+        Canvas c = transform.GetComponentInParent<Canvas>();
+
+        
+
+        //fix = c.pixelRect.width / c.;
     }
 
     public void RefreshData()
@@ -42,7 +50,7 @@ public class RequirementContainer : MonoBehaviour
 
     public void UpdateCallBack()
     {
-        Refresh();
+        RefreshData();
 
         StopTween();
 
@@ -73,7 +81,7 @@ public class RequirementContainer : MonoBehaviour
 
                 int bornTick = core.tick - requirement.time;
 
-                float x = moveDisPerTick * bornTick + max_length;
+                float x = moveDisPerTick * bornTick + max_length * 0.5f;
 
                 (unit.transform as RectTransform).anchoredPosition = new Vector2(x, 0);
             }
@@ -108,6 +116,11 @@ public class RequirementContainer : MonoBehaviour
             }
         }
     }
+
+    //void LateUpdate()
+    //{
+    //    container.anchoredPosition = new Vector2(Mathf.Round(container.anchoredPosition.x), 0);
+    //}
 
     private void To(float _v)
     {
