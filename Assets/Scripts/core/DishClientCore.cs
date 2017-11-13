@@ -148,28 +148,85 @@ public class DishClientCore : MonoBehaviour, IClient
         client.RefreshData();
     }
 
+    private ControlUnit downUnit;
+
+    private ControlUnit enterUnit;
+
+    private bool hasExit;
+
     public void OnPointerClick(ControlUnit _unit)
     {
-        Debug.Log("OnPointerClick:" + _unit);
+        //Debug.Log("OnPointerClick:" + _unit);
     }
 
     public void OnPointerDown(ControlUnit _unit)
     {
-        Debug.Log("OnPointerDown:" + _unit);
+        //Debug.Log("OnPointerDown:" + _unit);
+
+        enterUnit = downUnit = _unit;
+
+        hasExit = false;
     }
 
     public void OnPointerEnter(ControlUnit _unit)
     {
-        Debug.Log("OnPointerEnter:" + _unit);
+        //Debug.Log("OnPointerEnter:" + _unit);
+
+        enterUnit = _unit;
     }
 
     public void OnPointerExit(ControlUnit _unit)
     {
-        Debug.Log("OnPointerExit:" + _unit);
+        //Debug.Log("OnPointerExit:" + _unit);
+
+        enterUnit = null;
+
+        if (!hasExit)
+        {
+            hasExit = true;
+        }
     }
 
     public void OnPointerUp(ControlUnit _unit)
     {
-        Debug.Log("OnPointerUp:" + _unit);
+        //Debug.Log("OnPointerUp:" + _unit);
+    }
+
+    private void ClickControlUnit(ControlUnit _unit)
+    {
+        Debug.Log("ClickControlUnit:" + _unit);
+    }
+
+    private void DragControlUnit(ControlUnit _startUnit, ControlUnit _endUnit)
+    {
+        Debug.Log("DragControlUnit:" + _startUnit + "----->" + _endUnit);
+    }
+
+    void Update()
+    {
+        if (Input.GetMouseButtonUp(0))
+        {
+            //Debug.Log("OnPointerUp  hasExit:" + hasExit + "    downUnit:" + downUnit);
+
+            if (!hasExit && enterUnit == downUnit)
+            {
+                ClickControlUnit(enterUnit);
+            }
+            else
+            {
+                if (downUnit != null && enterUnit != null && enterUnit != downUnit)
+                {
+                    DragControlUnit(downUnit, enterUnit);
+                }
+            }
+
+            downUnit = enterUnit = null;
+
+            hasExit = false;
+        }
+        else if (Input.GetMouseButton(0))
+        {
+
+        }
     }
 }
