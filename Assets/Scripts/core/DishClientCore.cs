@@ -106,7 +106,9 @@ public class DishClientCore : MonoBehaviour, IClient
         }
         else if (_event is CommandChangeWorkerPos)
         {
+            CommandChangeWorkerPos command = (CommandChangeWorkerPos)_event;
 
+            GetCommandChangeWorkerPos(command);
         }
         else if (_event is CommandCompleteDish)
         {
@@ -122,7 +124,14 @@ public class DishClientCore : MonoBehaviour, IClient
     {
         PlayerDataUnit unit = _command.isMine == client.clientIsMine ? mPlayerData : oPlayerData;
 
+        
+    }
 
+    private void GetCommandChangeWorkerPos(CommandChangeWorkerPos _command)
+    {
+        PlayerDataUnit unit = _command.isMine == client.clientIsMine ? mPlayerData : oPlayerData;
+
+        unit.ChangeWorkerPos(_command);
     }
 
     public void UpdateCallBack()
@@ -158,6 +167,8 @@ public class DishClientCore : MonoBehaviour, IClient
     private ControlUnit enterUnit;
 
     private bool hasExit;
+
+    private List<ControlUnit> selectedUnitList = new List<ControlUnit>();
 
     public void OnPointerClick(ControlUnit _unit)
     {
@@ -208,12 +219,46 @@ public class DishClientCore : MonoBehaviour, IClient
 
     private void ClickControlUnit(ControlUnit _unit)
     {
-        Debug.Log("ClickControlUnit:" + _unit);
+        //Debug.Log("ClickControlUnit:" + _unit);
+
+        int index = selectedUnitList.IndexOf(_unit);
+
+        if (index != -1)
+        {
+            selectedUnitList[index].SetSelected(false);
+
+            selectedUnitList.RemoveAt(index);
+
+            return;
+        }
+
+        if (_unit is Background)
+        {
+            ClearSelectedUnitList();
+        }
+        else if (_unit is SeatUnit)
+        {
+            ClickSeatUnit(_unit as SeatUnit);
+        }
+        else if (_unit is DishResultBt)
+        {
+            ClickDishResultBt(_unit as DishResultBt);
+        }
+    }
+
+    private void ClearSelectedUnitList()
+    {
+        for (int i = 0; i < selectedUnitList.Count; i++)
+        {
+            selectedUnitList[i].SetSelected(false);
+        }
+
+        selectedUnitList.Clear();
     }
 
     private void DragControlUnit(ControlUnit _startUnit, ControlUnit _endUnit)
     {
-        Debug.Log("DragControlUnit:" + _startUnit + "----->" + _endUnit);
+        //Debug.Log("DragControlUnit:" + _startUnit + "----->" + _endUnit);
     }
 
     void Update()
@@ -245,5 +290,75 @@ public class DishClientCore : MonoBehaviour, IClient
         {
 
         }
+    }
+
+    public void ResultDisappear(ControlUnit _unit)
+    {
+        UnselectControlUnit(_unit);
+    }
+
+    private void UnselectControlUnit(ControlUnit _unit)
+    {
+        int index = selectedUnitList.IndexOf(_unit);
+
+        if (index != -1)
+        {
+            selectedUnitList[index].SetSelected(false);
+
+            selectedUnitList.RemoveAt(index);
+        }
+    }
+
+    private void ClickSeatUnit(SeatUnit _seatUnit)
+    {
+        if (selectedUnitList.Count == 0)
+        {
+            if (_seatUnit.GetWorker() != null)
+            {
+                selectedUnitList.Add(_seatUnit);
+
+                _seatUnit.SetSelected(true);
+            }
+        }
+        else if (selectedUnitList.Count == 1)
+        {
+            ControlUnit lastSelectedUnit = selectedUnitList[0];
+
+            if (lastSelectedUnit is SeatUnit)
+            {
+                //send command
+
+                client.ChangeWorkerPos((lastSelectedUnit as SeatUnit).GetWorker().index, _seatUnit.index);
+
+                ClearSelectedUnitList();
+            }
+            else
+            {
+                ClearSelectedUnitList();
+
+                if (_seatUnit.GetWorker() != null)
+                {
+                    selectedUnitList.Add(_seatUnit);
+
+                    _seatUnit.SetSelected(true);
+                }
+            }
+        }
+        else
+        {
+            ClearSelectedUnitList();
+
+            if (_seatUnit.GetWorker() != null)
+            {
+                selectedUnitList.Add(_seatUnit);
+
+                _seatUnit.SetSelected(true);
+            }
+        }
+    }
+
+    private void ClickDishResultBt(DishResultBt _bt)
+    {
+
     }
 }

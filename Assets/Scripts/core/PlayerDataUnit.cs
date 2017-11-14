@@ -66,7 +66,7 @@ public class PlayerDataUnit : MonoBehaviour
 
             workerArr[i] = workerUnit;
 
-
+            workerUnit.Init(i);
 
             go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/seat.prefab", null);
 
@@ -76,7 +76,7 @@ public class PlayerDataUnit : MonoBehaviour
 
             SeatUnit seatUnit = go.GetComponent<SeatUnit>();
 
-            seatUnit.Init(core, i, canControl);
+            seatUnit.Init(core, -i - 1, canControl);
 
             seatArr[i] = seatUnit;
 
@@ -137,19 +137,11 @@ public class PlayerDataUnit : MonoBehaviour
 
             WorkerUnit workerUnit = workerArr[i];
 
-            if (worker.pos == -1)
+            if (worker.pos < 0)
             {
-                for (int m = 0; m < CookConst.WORKER_NUM; m++)
-                {
-                    SeatUnit seat = seatArr[m];
+                SeatUnit seat = seatArr[-worker.pos - 1];
 
-                    if (!seat.GetWorker())
-                    {
-                        seat.SetWorker(workerUnit);
-
-                        break;
-                    }
-                }
+                seat.SetWorker(workerUnit);
             }
             else
             {
@@ -191,5 +183,23 @@ public class PlayerDataUnit : MonoBehaviour
         {
             dishList[i].Refresh();
         }
+    }
+
+    public void ChangeWorkerPos(CommandChangeWorkerPos _command)
+    {
+        WorkerUnit workerUnit = workerArr[_command.workerIndex];
+
+        SeatUnit seatUnit;
+
+        if (_command.targetPos < 0)
+        {
+            seatUnit = seatArr[-_command.targetPos - 1];
+        }
+        else
+        {
+            seatUnit = dishList[_command.targetPos].dishWorkerBt;
+        }
+
+        seatUnit.SetWorker(workerUnit);
     }
 }

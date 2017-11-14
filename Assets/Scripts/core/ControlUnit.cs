@@ -5,9 +5,14 @@ public class ControlUnit : MonoBehaviour, IPointerClickHandler, IPointerDownHand
 {
     protected DishClientCore core;
 
+    [SerializeField]
+    private GameObject selectedIcon;
+
     protected void Init(DishClientCore _core)
     {
         core = _core;
+
+        SetSelected(false);
     }
 
     public void OnPointerClick(PointerEventData _data)
@@ -33,5 +38,13 @@ public class ControlUnit : MonoBehaviour, IPointerClickHandler, IPointerDownHand
     public void OnPointerUp(PointerEventData _data)
     {
         core.OnPointerUp(this);
+    }
+
+    public void SetSelected(bool _b)
+    {
+        if (selectedIcon != null)
+        {
+            selectedIcon.SetActive(_b);
+        }
     }
 }

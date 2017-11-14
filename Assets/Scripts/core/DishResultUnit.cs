@@ -58,7 +58,7 @@ public class DishResultUnit : MonoBehaviour
         tweenID = -1;
     }
 
-    private void StopTween()
+    public void StopTween()
     {
         if (tweenID != -1)
         {

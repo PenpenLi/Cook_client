@@ -72,6 +72,8 @@ public class DishResultContainer : ControlUnit
     private void Disappear()
     {
         Clear();
+
+        core.ResultDisappear(this);
     }
 
     public void Clear()

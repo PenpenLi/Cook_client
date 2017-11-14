@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class SeatUnit : ControlUnit, IWorkerContainer
+public class SeatUnit : ControlUnit
 {
     [SerializeField]
     private Image img;
 
-    private int index;
+    public int index { private set; get; }
 
     private WorkerUnit workerUnit;
 
@@ -41,8 +41,8 @@ public class SeatUnit : ControlUnit, IWorkerContainer
         }
     }
 
-    public bool GetWorker()
+    public WorkerUnit GetWorker()
     {
-        return workerUnit != null;
+        return workerUnit;
     }
 }

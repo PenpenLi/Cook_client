@@ -32,7 +32,7 @@ public class NewBehaviourScript : MonoBehaviour
     void Awake()
     {
 
-
+        Log.Init(Debug.Log);
 
         ResourceLoader.Load(LoadOver);
 

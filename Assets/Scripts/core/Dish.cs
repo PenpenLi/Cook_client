@@ -4,15 +4,18 @@ using UnityEngine.UI;
 using textureFactory;
 using gameObjectFactory;
 
-public class Dish : MonoBehaviour, IWorkerContainer
+public class Dish : MonoBehaviour
 {
     public const float MAX_LENGTH = 360;
 
     [SerializeField]
-    private DishContainer container;
+    private RectTransform container;
 
     [SerializeField]
     private DishResultBt dishResultBt;
+
+    [SerializeField]
+    public SeatUnit dishWorkerBt;
 
     [SerializeField]
     private DishUnit prepare;
@@ -44,7 +47,7 @@ public class Dish : MonoBehaviour, IWorkerContainer
 
     private DishResultUnit resultUnit;
 
-    private WorkerUnit workerUnit;
+    private DishClientCore core;
 
     public void Init(DishClientCore _core, DishData _dishData, int _index, bool _canControl)
     {
@@ -52,9 +55,11 @@ public class Dish : MonoBehaviour, IWorkerContainer
 
         index = _index;
 
-        container.Init(_core);
+        core = _core;
 
-        dishResultBt.Init(_core);
+        dishResultBt.Init(core);
+
+        dishWorkerBt.Init(core, index, _canControl);
 
         if (!_canControl)
         {
@@ -66,7 +71,7 @@ public class Dish : MonoBehaviour, IWorkerContainer
 
         float time = dishData.sds.GetPrepareTime() + dishData.sds.GetCookTime() + dishData.sds.GetOptimizeTime();
 
-        (container.transform as RectTransform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, time / DishClientCore.MAX_TIME * MAX_LENGTH);
+        container.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, time / DishClientCore.MAX_TIME * MAX_LENGTH);
 
         prepare.Init(dishData.sds.GetPrepareTime());
 
@@ -211,32 +216,19 @@ public class Dish : MonoBehaviour, IWorkerContainer
 
     private void DishResultDisappear()
     {
+        resultUnit.StopTween();
+
         Destroy(resultUnit.gameObject);
 
         resultUnit = null;
 
         resultGo.SetActive(true);
+
+        core.ResultDisappear(dishResultBt);
     }
 
     public void SetWorker(WorkerUnit _workerUnit)
     {
-        if (workerUnit != _workerUnit)
-        {
-            workerUnit = _workerUnit;
-
-            if (workerUnit != null)
-            {
-                workerUnit.transform.SetParent(workerContainer, false);
-
-                (workerUnit.transform as RectTransform).anchoredPosition = Vector2.zero;
-
-                if (workerUnit.container != null)
-                {
-                    workerUnit.container.SetWorker(null);
-                }
-
-                workerUnit.container = this;
-            }
-        }
+        dishWorkerBt.SetWorker(_workerUnit);
     }
 }
