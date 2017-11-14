@@ -259,6 +259,10 @@ public class DishClientCore : MonoBehaviour, IClient
         {
             ClickDishResultContainer(_unit as DishResultContainer);
         }
+        else if (_unit is RequirementUnitContainer)
+        {
+
+        }
     }
 
     private void ClearSelectedUnitList()
@@ -507,6 +511,14 @@ public class DishClientCore : MonoBehaviour, IClient
             {
                 ClearSelectedUnitList();
             }
+        }
+    }
+
+    private void ClickRequirementUnitContainer(RequirementUnitContainer _container)
+    {
+        if (selectedUnitList.Count == _container.requirement.dishArr.Length)
+        {
+
         }
     }
 }

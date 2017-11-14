@@ -4,7 +4,7 @@ using gameObjectFactory;
 
 public class RequirementUnitContainer : ControlUnit
 {
-    private DishRequirement requirement;
+    public DishRequirement requirement { private set; get; }
 
     public void Init(DishClientCore _core, DishRequirement _requirement)
     {
