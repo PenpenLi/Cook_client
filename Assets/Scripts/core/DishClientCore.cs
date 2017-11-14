@@ -11,6 +11,9 @@ public class DishClientCore : MonoBehaviour, IClient
     public static float TICK_SPAN;
 
     [SerializeField]
+    public Canvas canvas;
+
+    [SerializeField]
     private RequirementContainer requirementContainer;
 
     [SerializeField]
@@ -120,7 +123,9 @@ public class DishClientCore : MonoBehaviour, IClient
         }
         else if (_event is CommandCompleteRequirement)
         {
+            CommandCompleteRequirement command = (CommandCompleteRequirement)_event;
 
+            GetCommandCompleteRequirement(command);
         }
     }
 
@@ -143,6 +148,22 @@ public class DishClientCore : MonoBehaviour, IClient
         PlayerDataUnit unit = _command.isMine == client.clientIsMine ? mPlayerData : oPlayerData;
 
         unit.CompleteDish(_command);
+    }
+
+    private void GetCommandCompleteRequirement(CommandCompleteRequirement _command)
+    {
+        PlayerDataUnit unit = _command.isMine == client.clientIsMine ? mPlayerData : oPlayerData;
+
+        RequirementUnitContainer container = requirementContainer.dic[_command.requirementUid];
+
+        requirementContainer.dic.Remove(_command.requirementUid);
+
+        Destroy(container.gameObject);
+
+        for (int i = 0; i < _command.resultList.Count; i++)
+        {
+            unit.dishResultContainerArr[_command.resultList[i]].Clear();
+        }
     }
 
     public void UpdateCallBack()
@@ -173,11 +194,38 @@ public class DishClientCore : MonoBehaviour, IClient
         client.RefreshData();
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private Vector2 downPos;
+
     private ControlUnit downUnit;
 
     private ControlUnit enterUnit;
 
     private bool hasExit;
+
+    private bool hasDragCheck;
+
+    private DragUnit dragUnit;
 
     private List<ControlUnit> selectedUnitList = new List<ControlUnit>();
 
@@ -198,10 +246,16 @@ public class DishClientCore : MonoBehaviour, IClient
         }
         else
         {
+            downPos = Input.mousePosition;
+
             enterUnit = downUnit = _unit;
         }
 
         hasExit = false;
+
+        hasDragCheck = false;
+
+        dragUnit = null;
     }
 
     public void OnPointerEnter(ControlUnit _unit)
@@ -261,7 +315,11 @@ public class DishClientCore : MonoBehaviour, IClient
         }
         else if (_unit is RequirementUnitContainer)
         {
-
+            ClickRequirementUnitContainer(_unit as RequirementUnitContainer);
+        }
+        else if (_unit is TrashContainer)
+        {
+            ClickTrashContainer();
         }
     }
 
@@ -275,9 +333,100 @@ public class DishClientCore : MonoBehaviour, IClient
         selectedUnitList.Clear();
     }
 
+    private void StartDrag()
+    {
+        hasDragCheck = true;
+
+        if (downUnit is SeatUnit)
+        {
+            WorkerUnit worker = (downUnit as SeatUnit).GetWorker();
+
+            if (worker != null)
+            {
+                dragUnit = worker;
+            }
+        }
+        else if (downUnit is DishResultContainer)
+        {
+            DishResultUnit unit = (downUnit as DishResultContainer).result;
+
+            if (unit != null)
+            {
+                dragUnit = unit;
+            }
+        }
+        else if (downUnit is DishResultBt)
+        {
+            DishResultUnit unit = (downUnit as DishResultBt).dish.resultUnit;
+
+            if (unit != null)
+            {
+                dragUnit = unit;
+            }
+        }
+
+        if (dragUnit != null)
+        {
+            dragUnit.StartDrag();
+
+            ClearSelectedUnitList();
+        }
+    }
+
     private void DragControlUnit(ControlUnit _startUnit, ControlUnit _endUnit)
     {
-        //Debug.Log("DragControlUnit:" + _startUnit + "----->" + _endUnit);
+        if (_startUnit is SeatUnit)
+        {
+            SeatUnit unit = _startUnit as SeatUnit;
+
+            if (_endUnit is SeatUnit)
+            {
+                SeatUnit endUnit = _endUnit as SeatUnit;
+
+                if (endUnit.GetWorker() == null)
+                {
+                    //send command
+                    client.ChangeWorkerPos(unit.GetWorker().index, endUnit.index);
+                }
+            }
+        }
+        else if (_startUnit is DishResultContainer)
+        {
+            DishResultContainer unit = _startUnit as DishResultContainer;
+
+            if (_endUnit is DishResultContainer)
+            {
+                DishResultContainer endUnit = _endUnit as DishResultContainer;
+
+                //send command
+                client.ChangeResultPos(unit.index, endUnit.index);
+            }
+            else if (_endUnit is TrashContainer)
+            {
+                //send command
+                client.ChangeResultPos(unit.index, -1);
+            }
+        }
+        else
+        {
+            DishResultBt unit = _startUnit as DishResultBt;
+
+            if (_endUnit is DishResultContainer)
+            {
+                DishResultContainer endUnit = _endUnit as DishResultContainer;
+
+                if (endUnit.result == null)
+                {
+                    //send command
+                    client.CompleteDish(unit.dish.index, endUnit.index);
+                }
+            }
+            else if (_endUnit is TrashContainer)
+            {
+                //send command
+                client.CompleteDish(unit.dish.index, -1);
+            }
+        }
     }
 
     void Update()
@@ -286,28 +435,37 @@ public class DishClientCore : MonoBehaviour, IClient
         {
             //Debug.Log("OnPointerUp  hasExit:" + hasExit + "    downUnit:" + downUnit);
 
-            if (downUnit != null)
+            if (dragUnit != null)
+            {
+                dragUnit.EndDrag();
+
+                if (enterUnit != downUnit)
+                {
+                    DragControlUnit(downUnit, enterUnit);
+                }
+            }
+            else if (downUnit != null)
             {
                 if (!hasExit && enterUnit == downUnit)
                 {
                     ClickControlUnit(enterUnit);
-                }
-                else
-                {
-                    if (enterUnit != null && enterUnit != downUnit)
-                    {
-                        DragControlUnit(downUnit, enterUnit);
-                    }
                 }
             }
 
             downUnit = enterUnit = null;
 
             hasExit = false;
+
+            hasDragCheck = false;
+
+            dragUnit = null;
         }
         else if (Input.GetMouseButton(0))
         {
-
+            if (!hasDragCheck && downUnit != null && Vector2.Distance(downPos, Input.mousePosition) > 10.0f)
+            {
+                StartDrag();
+            }
         }
     }
 
@@ -346,7 +504,6 @@ public class DishClientCore : MonoBehaviour, IClient
             if (lastSelectedUnit is SeatUnit)
             {
                 //send command
-
                 client.ChangeWorkerPos((lastSelectedUnit as SeatUnit).GetWorker().index, _seatUnit.index);
 
                 ClearSelectedUnitList();
@@ -518,7 +675,27 @@ public class DishClientCore : MonoBehaviour, IClient
     {
         if (selectedUnitList.Count == _container.requirement.dishArr.Length)
         {
+            List<int> list = new List<int>();
 
+            for (int i = 0; i < selectedUnitList.Count; i++)
+            {
+                DishResultContainer container = selectedUnitList[i] as DishResultContainer;
+
+                list.Add(container.index);
+            }
+
+            if (client.CheckCanCompleteRequirement(list, _container.requirement))
+            {
+                //send command
+                client.CompleteRequirement(list, _container.requirement.uid);
+            }
         }
+
+        ClearSelectedUnitList();
+    }
+
+    private void ClickTrashContainer()
+    {
+        ClearSelectedUnitList();
     }
 }

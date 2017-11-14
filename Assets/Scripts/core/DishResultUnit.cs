@@ -4,7 +4,7 @@ using Cook_lib;
 using textureFactory;
 using superTween;
 
-public class DishResultUnit : MonoBehaviour
+public class DishResultUnit : DragUnit
 {
     [SerializeField]
     private Image bg;
@@ -21,8 +21,10 @@ public class DishResultUnit : MonoBehaviour
 
     private int tweenID = -1;
 
-    public void Init(DishResult _dishResult)
+    public void Init(DishClientCore _core, DishResult _dishResult)
     {
+        base.Init(_core);
+
         dishResult = _dishResult;
 
         exceedTime = dishResult.sds.GetExceedTime() * CookConst.TICK_NUM_PER_SECOND;

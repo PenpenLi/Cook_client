@@ -209,20 +209,14 @@ public class Dish : MonoBehaviour
 
         resultUnit = go.GetComponent<DishResultUnit>();
 
-        resultUnit.Init(dishData.result);
+        resultUnit.Init(core, dishData.result);
 
         resultGo.SetActive(false);
     }
 
     private void DishResultDisappear()
     {
-        resultUnit.StopTween();
-
-        Destroy(resultUnit.gameObject);
-
-        resultUnit = null;
-
-        resultGo.SetActive(true);
+        DestroyDishResult();
 
         core.ResultDisappear(dishResultBt);
     }
@@ -232,6 +226,15 @@ public class Dish : MonoBehaviour
         resultUnit = null;
 
         resultGo.SetActive(true);
+    }
+
+    public void DestroyDishResult()
+    {
+        resultUnit.StopTween();
+
+        Destroy(resultUnit.gameObject);
+
+        RemoveDishResult();
     }
 
     public void SetWorker(WorkerUnit _workerUnit)

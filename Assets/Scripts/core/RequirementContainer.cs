@@ -16,7 +16,7 @@ public class RequirementContainer : MonoBehaviour
 
     private Dictionary<int, DishRequirement> dataDic;
 
-    private Dictionary<int, RequirementUnitContainer> dic = new Dictionary<int, RequirementUnitContainer>();
+    public Dictionary<int, RequirementUnitContainer> dic = new Dictionary<int, RequirementUnitContainer>();
 
     private float moveDisPerTick;
 

@@ -23,7 +23,10 @@ public class PlayerDataUnit : MonoBehaviour
     [SerializeField]
     private RectTransform seatContainer;
 
-    private DishResultContainer[] dishResultContainerArr = new DishResultContainer[CookConst.RESULT_STATE.Length];
+    [SerializeField]
+    private TrashContainer trashContainer;
+
+    public DishResultContainer[] dishResultContainerArr = new DishResultContainer[CookConst.RESULT_STATE.Length];
 
     private List<Dish> dishList = new List<Dish>();
 
@@ -42,6 +45,8 @@ public class PlayerDataUnit : MonoBehaviour
         core = _core;
 
         canControl = _canControl;
+
+        trashContainer.Init(core);
 
         for (int i = 0; i < CookConst.RESULT_STATE.Length; i++)
         {
@@ -66,7 +71,7 @@ public class PlayerDataUnit : MonoBehaviour
 
             workerArr[i] = workerUnit;
 
-            workerUnit.Init(i);
+            workerUnit.Init(core, i);
 
             go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/seat.prefab", null);
 
@@ -125,7 +130,7 @@ public class PlayerDataUnit : MonoBehaviour
 
                 DishResultUnit dishResultUnit = go.GetComponent<DishResultUnit>();
 
-                dishResultUnit.Init(dishResult);
+                dishResultUnit.Init(core, dishResult);
 
                 dishResultContainer.SetResult(dishResultUnit);
             }
@@ -236,10 +241,17 @@ public class PlayerDataUnit : MonoBehaviour
     {
         Dish dish = dishList[_command.pos];
 
-        DishResultContainer dishResultContainer = dishResultContainerArr[_command.targetPos];
+        if (_command.targetPos != -1)
+        {
+            DishResultContainer dishResultContainer = dishResultContainerArr[_command.targetPos];
 
-        dishResultContainer.SetResult(dish.resultUnit);
+            dishResultContainer.SetResult(dish.resultUnit);
 
-        dish.RemoveDishResult();
+            dish.RemoveDishResult();
+        }
+        else
+        {
+            dish.DestroyDishResult();
+        }
     }
 }
