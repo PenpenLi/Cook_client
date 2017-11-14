@@ -103,6 +103,8 @@ public class DishClientCore : MonoBehaviour, IClient
         if (_event is CommandChangeResultPos)
         {
             CommandChangeResultPos command = (CommandChangeResultPos)_event;
+
+            GetCommandChangeResultPos(command);
         }
         else if (_event is CommandChangeWorkerPos)
         {
@@ -112,7 +114,9 @@ public class DishClientCore : MonoBehaviour, IClient
         }
         else if (_event is CommandCompleteDish)
         {
+            CommandCompleteDish command = (CommandCompleteDish)_event;
 
+            GetCommandCompleteDish(command);
         }
         else if (_event is CommandCompleteRequirement)
         {
@@ -124,7 +128,7 @@ public class DishClientCore : MonoBehaviour, IClient
     {
         PlayerDataUnit unit = _command.isMine == client.clientIsMine ? mPlayerData : oPlayerData;
 
-        
+        unit.ChangeResultPos(_command);
     }
 
     private void GetCommandChangeWorkerPos(CommandChangeWorkerPos _command)
@@ -132,6 +136,13 @@ public class DishClientCore : MonoBehaviour, IClient
         PlayerDataUnit unit = _command.isMine == client.clientIsMine ? mPlayerData : oPlayerData;
 
         unit.ChangeWorkerPos(_command);
+    }
+
+    private void GetCommandCompleteDish(CommandCompleteDish _command)
+    {
+        PlayerDataUnit unit = _command.isMine == client.clientIsMine ? mPlayerData : oPlayerData;
+
+        unit.CompleteDish(_command);
     }
 
     public void UpdateCallBack()
@@ -243,6 +254,10 @@ public class DishClientCore : MonoBehaviour, IClient
         else if (_unit is DishResultBt)
         {
             ClickDishResultBt(_unit as DishResultBt);
+        }
+        else if (_unit is DishResultContainer)
+        {
+            ClickDishResultContainer(_unit as DishResultContainer);
         }
     }
 
@@ -359,6 +374,139 @@ public class DishClientCore : MonoBehaviour, IClient
 
     private void ClickDishResultBt(DishResultBt _bt)
     {
+        if (_bt.dish.resultUnit != null)
+        {
+            if (selectedUnitList.Count == 0)
+            {
+                selectedUnitList.Add(_bt);
 
+                _bt.SetSelected(true);
+            }
+            else if (selectedUnitList.Count == 1)
+            {
+                if (selectedUnitList[0] == _bt)
+                {
+                    ClearSelectedUnitList();
+                }
+                else
+                {
+                    ClearSelectedUnitList();
+
+                    selectedUnitList.Add(_bt);
+
+                    _bt.SetSelected(true);
+                }
+            }
+            else
+            {
+                ClearSelectedUnitList();
+
+                selectedUnitList.Add(_bt);
+
+                _bt.SetSelected(true);
+            }
+        }
+        else
+        {
+            ClearSelectedUnitList();
+        }
+    }
+
+    private void ClickDishResultContainer(DishResultContainer _dishResultContainer)
+    {
+        if (selectedUnitList.Count == 0)
+        {
+            if (_dishResultContainer.result != null)
+            {
+                selectedUnitList.Add(_dishResultContainer);
+
+                _dishResultContainer.SetSelected(true);
+            }
+        }
+        else if (selectedUnitList.Count == 1)
+        {
+            ControlUnit lastSelectedUnit = selectedUnitList[0];
+
+            if (lastSelectedUnit is DishResultBt)
+            {
+                if (_dishResultContainer.result == null)
+                {
+                    DishResultBt dishResultBt = lastSelectedUnit as DishResultBt;
+
+                    //send command
+                    client.CompleteDish(dishResultBt.dish.index, _dishResultContainer.index);
+
+                    ClearSelectedUnitList();
+                }
+                else
+                {
+                    ClearSelectedUnitList();
+
+                    selectedUnitList.Add(_dishResultContainer);
+
+                    _dishResultContainer.SetSelected(true);
+                }
+            }
+            else if (lastSelectedUnit is DishResultContainer)
+            {
+                if (lastSelectedUnit == _dishResultContainer)
+                {
+                    ClearSelectedUnitList();
+                }
+                else
+                {
+                    if (_dishResultContainer.result == null)
+                    {
+                        DishResultContainer lastDishResultContainer = lastSelectedUnit as DishResultContainer;
+
+                        //send command
+                        client.ChangeResultPos(lastDishResultContainer.index, _dishResultContainer.index);
+
+                        ClearSelectedUnitList();
+                    }
+                    else
+                    {
+                        selectedUnitList.Add(_dishResultContainer);
+
+                        _dishResultContainer.SetSelected(true);
+                    }
+                }
+            }
+            else
+            {
+                ClearSelectedUnitList();
+
+                if (_dishResultContainer.result != null)
+                {
+                    selectedUnitList.Add(_dishResultContainer);
+
+                    _dishResultContainer.SetSelected(true);
+                }
+            }
+        }
+        else
+        {
+            if (_dishResultContainer.result != null)
+            {
+                int index = selectedUnitList.IndexOf(_dishResultContainer);
+
+                if (index == -1)
+                {
+                    selectedUnitList.Add(_dishResultContainer);
+
+                    _dishResultContainer.SetSelected(true);
+                }
+                else
+                {
+                    selectedUnitList.RemoveAt(index);
+
+                    _dishResultContainer.SetSelected(false);
+                }
+            }
+            else
+            {
+                ClearSelectedUnitList();
+            }
+        }
     }
 }

@@ -43,9 +43,9 @@ public class Dish : MonoBehaviour
 
     private DishData dishData;
 
-    private int index;
+    public int index { private set; get; }
 
-    private DishResultUnit resultUnit;
+    public DishResultUnit resultUnit;
 
     private DishClientCore core;
 
@@ -57,7 +57,7 @@ public class Dish : MonoBehaviour
 
         core = _core;
 
-        dishResultBt.Init(core);
+        dishResultBt.Init(core, this);
 
         dishWorkerBt.Init(core, index, _canControl);
 
@@ -225,6 +225,13 @@ public class Dish : MonoBehaviour
         resultGo.SetActive(true);
 
         core.ResultDisappear(dishResultBt);
+    }
+
+    public void RemoveDishResult()
+    {
+        resultUnit = null;
+
+        resultGo.SetActive(true);
     }
 
     public void SetWorker(WorkerUnit _workerUnit)

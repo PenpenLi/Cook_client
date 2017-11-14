@@ -1,7 +1,11 @@
 ﻿public class DishResultBt : ControlUnit
 {
-    public new void Init(DishClientCore _core)
+    public Dish dish { private set; get; }
+
+    public void Init(DishClientCore _core, Dish _dish)
     {
-        base.Init(_core);
+        Init(_core);
+
+        dish = _dish;
     }
 }

@@ -3,12 +3,12 @@ using UnityEngine.EventSystems;
 
 public class ControlUnit : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler, IPointerUpHandler
 {
-    protected DishClientCore core;
+    public DishClientCore core;
 
     [SerializeField]
     private GameObject selectedIcon;
 
-    protected void Init(DishClientCore _core)
+    public void Init(DishClientCore _core)
     {
         core = _core;
 

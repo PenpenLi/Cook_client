@@ -202,4 +202,44 @@ public class PlayerDataUnit : MonoBehaviour
 
         seatUnit.SetWorker(workerUnit);
     }
+
+    public void ChangeResultPos(CommandChangeResultPos _command)
+    {
+        DishResultContainer dishResultContainer = dishResultContainerArr[_command.pos];
+
+        if (_command.targetPos == -1)
+        {
+            dishResultContainer.Clear();
+        }
+        else
+        {
+            DishResultContainer targetDishResultContainer = dishResultContainerArr[_command.targetPos];
+
+            if (targetDishResultContainer.result == null)
+            {
+                targetDishResultContainer.SetResult(dishResultContainer.result);
+
+                dishResultContainer.SetResult(null);
+            }
+            else
+            {
+                DishResultUnit tmpDishResult = targetDishResultContainer.result;
+
+                targetDishResultContainer.SetResult(dishResultContainer.result);
+
+                dishResultContainer.SetResult(tmpDishResult);
+            }
+        }
+    }
+
+    public void CompleteDish(CommandCompleteDish _command)
+    {
+        Dish dish = dishList[_command.pos];
+
+        DishResultContainer dishResultContainer = dishResultContainerArr[_command.targetPos];
+
+        dishResultContainer.SetResult(dish.resultUnit);
+
+        dish.RemoveDishResult();
+    }
 }

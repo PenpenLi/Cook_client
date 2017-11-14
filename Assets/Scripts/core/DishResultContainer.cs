@@ -8,9 +8,9 @@ public class DishResultContainer : ControlUnit
     [SerializeField]
     private Image bg;
 
-    private int index;
+    public int index { private set; get; }
 
-    private DishResultUnit result;
+    public DishResultUnit result;
 
     private DishResult[] dishResultArr;
 
@@ -80,6 +80,8 @@ public class DishResultContainer : ControlUnit
     {
         if (result != null)
         {
+            result.StopTween();
+
             Destroy(result.gameObject);
 
             result = null;
