@@ -10,6 +10,7 @@ public class DishResultContainer : ControlUnit
 
     public int index { private set; get; }
 
+    [HideInInspector]
     public DishResultUnit result;
 
     private DishResult[] dishResultArr;

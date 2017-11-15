@@ -3,9 +3,6 @@ using publicTools;
 
 public class DragUnit : MonoBehaviour
 {
-    [SerializeField]
-    private CanvasGroup cg;
-
     private DishClientCore core;
 
     private GameObject copy;
@@ -23,9 +20,13 @@ public class DragUnit : MonoBehaviour
 
         (copy.transform as RectTransform).anchoredPosition = PublicTools.MousePositionToCanvasPosition(core.canvas, Input.mousePosition);
 
-        DragUnit du = copy.GetComponent<DragUnit>();
+        CanvasGroup cg = copy.AddComponent<CanvasGroup>();
 
-        du.cg.alpha = 0.5f;
+        cg.alpha = 0.5f;
+
+        cg.interactable = false;
+
+        cg.blocksRaycasts = false;
     }
 
     void Update()

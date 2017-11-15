@@ -45,6 +45,7 @@ public class Dish : MonoBehaviour
 
     public int index { private set; get; }
 
+    [HideInInspector]
     public DishResultUnit resultUnit;
 
     private DishClientCore core;

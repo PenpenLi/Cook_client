@@ -3,6 +3,7 @@ using UnityEngine.EventSystems;
 
 public class ControlUnit : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler, IPointerUpHandler
 {
+    [HideInInspector]
     public DishClientCore core;
 
     [SerializeField]

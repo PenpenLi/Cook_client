@@ -1,5 +1,8 @@
-﻿public class WorkerUnit : DragUnit
+﻿using UnityEngine;
+
+public class WorkerUnit : DragUnit
 {
+    [HideInInspector]
     public SeatUnit container;
 
     public int index { private set; get; }

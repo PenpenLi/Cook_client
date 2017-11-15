@@ -26,8 +26,10 @@ public class PlayerDataUnit : MonoBehaviour
     [SerializeField]
     private TrashContainer trashContainer;
 
+    [HideInInspector]
     public DishResultContainer[] dishResultContainerArr = new DishResultContainer[CookConst.RESULT_STATE.Length];
 
+    [HideInInspector]
     public List<Dish> dishList = new List<Dish>();
 
     private WorkerUnit[] workerArr = new WorkerUnit[CookConst.WORKER_NUM];
