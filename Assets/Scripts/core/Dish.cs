@@ -113,7 +113,7 @@ public class Dish : MonoBehaviour
 
         (optimize.transform as RectTransform).anchoredPosition = new Vector2(prepareLength + cookLength, 0);
 
-        TextureFactory.Instance.GetTexture<Sprite>("Assets/Resource/texture/" + (dishData.sds as DishSDS).icon + ".png", GetSprite, true);
+        TextureFactory.Instance.GetTexture<Sprite>("Assets/Resource/texture/" + (dishData.sds.GetResult() as ResultSDS).icon + ".png", GetSprite, true);
 
         if (dishData.result != null)
         {

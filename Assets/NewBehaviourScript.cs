@@ -92,7 +92,7 @@ public class NewBehaviourScript : MonoBehaviour
 
     private void ServerStart()
     {
-        Cook_server.Init(StaticData.GetDic<DishSDS>());
+        Cook_server.Init(StaticData.GetDic<DishSDS>(), StaticData.GetDic<ResultSDS>());
 
         server.ServerSetCallBack(ServerCallBack);
 

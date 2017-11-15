@@ -17,7 +17,7 @@ public class RequirementUnit : MonoBehaviour
     {
         dishResultBase = _dishResultBase;
 
-        TextureFactory.Instance.GetTexture<Sprite>("Assets/Resource/texture/" + (dishResultBase.sds as DishSDS).icon + ".png", GetSprite, true);
+        TextureFactory.Instance.GetTexture<Sprite>("Assets/Resource/texture/" + (dishResultBase.sds as ResultSDS).icon + ".png", GetSprite, true);
 
         RefreshIsOptimized();
     }

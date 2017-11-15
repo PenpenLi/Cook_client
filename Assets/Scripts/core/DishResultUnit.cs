@@ -29,7 +29,7 @@ public class DishResultUnit : DragUnit
 
         exceedTime = dishResult.sds.GetExceedTime() * CookConst.TICK_NUM_PER_SECOND;
 
-        TextureFactory.Instance.GetTexture<Sprite>("Assets/Resource/texture/" + (dishResult.sds as DishSDS).icon + ".png", GetSprite, true);
+        TextureFactory.Instance.GetTexture<Sprite>("Assets/Resource/texture/" + (dishResult.sds as ResultSDS).icon + ".png", GetSprite, true);
 
         timeIcon.fillAmount = dishResult.time / exceedTime;
 

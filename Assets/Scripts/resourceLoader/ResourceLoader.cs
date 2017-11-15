@@ -91,6 +91,8 @@ public static class ResourceLoader
 
         StaticData.Dispose();
 
+        StaticData.Load<ResultSDS>("result");
+
         StaticData.Load<DishSDS>("dish");
     }
 
