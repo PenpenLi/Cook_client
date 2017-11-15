@@ -52,7 +52,9 @@ public class NewBehaviourScript : MonoBehaviour
 
     void FixedUpdate()
     {
-        server.ServerUpdate();
+        //server.ServerUpdate();
+
+        server.ServerUpdateTo();
     }
 
     private void LoadOver()
