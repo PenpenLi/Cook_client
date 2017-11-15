@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cook_lib;
-using gameObjectFactory;
 using System;
 
 public class NewBehaviourScript : MonoBehaviour
@@ -15,32 +14,14 @@ public class NewBehaviourScript : MonoBehaviour
 
     private Cook_server server = new Cook_server();
 
-    private static string[] strs = new string[]
-    {
-        "Assets/Resource/prefab/dish.prefab",
-        "Assets/Resource/prefab/dishResult.prefab",
-        "Assets/Resource/prefab/playerDataUnit.prefab",
-        "Assets/Resource/prefab/requirement.prefab",
-        "Assets/Resource/prefab/requirementContainer.prefab",
-        "Assets/Resource/prefab/requirementUnit.prefab",
-        "Assets/Resource/prefab/resultContainer.prefab",
-        "Assets/Resource/prefab/seat.prefab",
-        "Assets/Resource/prefab/workerUnit.prefab",
-    };
-
     // Use this for initialization
     void Awake()
     {
-
         Log.Init(Debug.Log);
-
-        ResourceLoader.Load(LoadOver);
-
-        GameObjectFactory.Instance.PreloadGameObjects(strs, LoadOver);
 
         Time.fixedDeltaTime = (float)1 / CookConst.TICK_NUM_PER_SECOND;
 
-
+        ResourceLoader.Load(LoadOver);
     }
 
     private void ServerCallBack(bool _isMine, bool _isPush, MemoryStream _ms)
@@ -76,18 +57,13 @@ public class NewBehaviourScript : MonoBehaviour
 
     private void LoadOver()
     {
-        num++;
+        Debug.Log("loadover");
 
-        if (num == 2)
-        {
-            Debug.Log("loadover");
+        ServerStart();
 
-            ServerStart();
+        core.Init(SendData, SendDataWithReply);
 
-            core.Init(SendData, SendDataWithReply);
-
-            core.RequestRefreshData();
-        }
+        core.RequestRefreshData();
     }
 
     private void SendData(MemoryStream _ms)

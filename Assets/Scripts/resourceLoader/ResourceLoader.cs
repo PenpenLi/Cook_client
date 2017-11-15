@@ -1,12 +1,26 @@
 ﻿using System;
 using UnityEngine;
 using System.IO;
+using gameObjectFactory;
 #if USE_ASSETBUNDLE
 using wwwManager;
 #endif
 
 public static class ResourceLoader
 {
+    private static string[] strs = new string[]
+    {
+        "Assets/Resource/prefab/dish.prefab",
+        "Assets/Resource/prefab/dishResult.prefab",
+        "Assets/Resource/prefab/playerDataUnit.prefab",
+        "Assets/Resource/prefab/requirement.prefab",
+        "Assets/Resource/prefab/requirementContainer.prefab",
+        "Assets/Resource/prefab/requirementUnit.prefab",
+        "Assets/Resource/prefab/resultContainer.prefab",
+        "Assets/Resource/prefab/seat.prefab",
+        "Assets/Resource/prefab/workerUnit.prefab",
+    };
+
     private static Action callBack;
 
     private static int num;
@@ -20,9 +34,11 @@ public static class ResourceLoader
 
     private static void ConfigLoadOver()
     {
-        num = 2;
+        num = 3;
 
         LoadTables();
+
+        PreloadPrefabs();
 
         OneLoadOver();
     }
@@ -76,6 +92,11 @@ public static class ResourceLoader
         StaticData.Dispose();
 
         StaticData.Load<DishSDS>("dish");
+    }
+
+    private static void PreloadPrefabs()
+    {
+        GameObjectFactory.Instance.PreloadGameObjects(strs, OneLoadOver);
     }
 
     private static void OneLoadOver()

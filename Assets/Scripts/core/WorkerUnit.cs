@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-public class WorkerUnit : DragUnit
+﻿public class WorkerUnit : DragUnit
 {
     public SeatUnit container;
 

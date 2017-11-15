@@ -3,9 +3,6 @@ using publicTools;
 
 public class DragUnit : MonoBehaviour
 {
-    //private RectTransform lastParent;
-
-    //private Vector2 lastPos;
     [SerializeField]
     private CanvasGroup cg;
 
