@@ -3,11 +3,15 @@ using publicTools;
 
 public class DragUnit : MonoBehaviour
 {
-    private RectTransform lastParent;
+    //private RectTransform lastParent;
 
-    private Vector2 lastPos;
+    //private Vector2 lastPos;
+    [SerializeField]
+    private CanvasGroup cg;
 
     private DishClientCore core;
+
+    private GameObject copy;
 
     public virtual void Init(DishClientCore _core)
     {
@@ -16,29 +20,29 @@ public class DragUnit : MonoBehaviour
 
     public void StartDrag()
     {
-        lastParent = transform.parent as RectTransform;
+        copy = Instantiate(gameObject);
 
-        lastPos = (transform as RectTransform).anchoredPosition;
+        copy.transform.SetParent(core.transform, false);
 
-        transform.SetParent(core.transform, false);
+        (copy.transform as RectTransform).anchoredPosition = PublicTools.MousePositionToCanvasPosition(core.canvas, Input.mousePosition);
 
-        (transform as RectTransform).anchoredPosition = PublicTools.MousePositionToCanvasPosition(core.canvas, Input.mousePosition);
+        DragUnit du = copy.GetComponent<DragUnit>();
+
+        du.cg.alpha = 0.5f;
     }
 
     void Update()
     {
-        if (lastParent != null)
+        if (copy != null)
         {
-            (transform as RectTransform).anchoredPosition = PublicTools.MousePositionToCanvasPosition(core.canvas, Input.mousePosition);
+            (copy.transform as RectTransform).anchoredPosition = PublicTools.MousePositionToCanvasPosition(core.canvas, Input.mousePosition);
         }
     }
 
     public void EndDrag()
     {
-        transform.SetParent(lastParent, false);
+        Destroy(copy);
 
-        (transform as RectTransform).anchoredPosition = lastPos;
-
-        lastParent = null;
+        copy = null;
     }
 }

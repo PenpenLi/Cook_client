@@ -120,6 +120,6 @@ public class NewBehaviourScript : MonoBehaviour
 
         server.ServerSetCallBack(ServerCallBack);
 
-        server.ServerStart(new List<int>() { 1, 2, 3, 4 }, new List<int>() { 1, 2, 3, 4 });
+        server.ServerStart(new List<int>() { 1, 2, 3, 4, 5 }, new List<int>() { 1, 2, 3, 4, 5 });
     }
 }
