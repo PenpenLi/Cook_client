@@ -28,7 +28,7 @@ public class PlayerDataUnit : MonoBehaviour
 
     public DishResultContainer[] dishResultContainerArr = new DishResultContainer[CookConst.RESULT_STATE.Length];
 
-    private List<Dish> dishList = new List<Dish>();
+    public List<Dish> dishList = new List<Dish>();
 
     private WorkerUnit[] workerArr = new WorkerUnit[CookConst.WORKER_NUM];
 

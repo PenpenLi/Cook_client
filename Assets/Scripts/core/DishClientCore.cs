@@ -162,7 +162,16 @@ public class DishClientCore : MonoBehaviour, IClient
 
         for (int i = 0; i < _command.resultList.Count; i++)
         {
-            unit.dishResultContainerArr[_command.resultList[i]].Clear();
+            int index = _command.resultList[i];
+
+            if (index > -1)
+            {
+                unit.dishResultContainerArr[index].Clear();
+            }
+            else
+            {
+                unit.dishList[-index - 1].DestroyDishResult();
+            }
         }
     }
 
@@ -545,13 +554,22 @@ public class DishClientCore : MonoBehaviour, IClient
             }
             else if (selectedUnitList.Count == 1)
             {
-                if (selectedUnitList[0] == _bt)
+                ControlUnit lastSelectedUnit = selectedUnitList[0];
+
+                if (lastSelectedUnit == _bt)
                 {
                     ClearSelectedUnitList();
                 }
                 else
                 {
-                    ClearSelectedUnitList();
+                    if (lastSelectedUnit is DishResultBt || lastSelectedUnit is DishResultContainer)
+                    {
+
+                    }
+                    else
+                    {
+                        ClearSelectedUnitList();
+                    }
 
                     selectedUnitList.Add(_bt);
 
@@ -560,11 +578,22 @@ public class DishClientCore : MonoBehaviour, IClient
             }
             else
             {
-                ClearSelectedUnitList();
+                //ClearSelectedUnitList();
 
-                selectedUnitList.Add(_bt);
+                int index = selectedUnitList.IndexOf(_bt);
 
-                _bt.SetSelected(true);
+                if (index == -1)
+                {
+                    selectedUnitList.Add(_bt);
+
+                    _bt.SetSelected(true);
+                }
+                else
+                {
+                    selectedUnitList.RemoveAt(index);
+
+                    _bt.SetSelected(false);
+                }
             }
         }
         else
@@ -601,7 +630,7 @@ public class DishClientCore : MonoBehaviour, IClient
                 }
                 else
                 {
-                    ClearSelectedUnitList();
+                    //ClearSelectedUnitList();
 
                     selectedUnitList.Add(_dishResultContainer);
 
@@ -679,9 +708,20 @@ public class DishClientCore : MonoBehaviour, IClient
 
             for (int i = 0; i < selectedUnitList.Count; i++)
             {
-                DishResultContainer container = selectedUnitList[i] as DishResultContainer;
+                ControlUnit controlUnit = selectedUnitList[i];
 
-                list.Add(container.index);
+                if (controlUnit is DishResultContainer)
+                {
+                    DishResultContainer container = controlUnit as DishResultContainer;
+
+                    list.Add(container.index);
+                }
+                else
+                {
+                    DishResultBt bt = controlUnit as DishResultBt;
+
+                    list.Add(-bt.dish.index - 1);
+                }
             }
 
             if (client.CheckCanCompleteRequirement(list, _container.requirement))
