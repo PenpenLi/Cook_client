@@ -10,9 +10,9 @@ public class NewBehaviourScript : MonoBehaviour
     [SerializeField]
     private DishClientCore core;
 
-    private int num;
-
     private Cook_server server = new Cook_server();
+
+    private bool initOK = false;
 
     // Use this for initialization
     void Awake()
@@ -52,9 +52,12 @@ public class NewBehaviourScript : MonoBehaviour
 
     void FixedUpdate()
     {
-        //server.ServerUpdate();
+        if (initOK)
+        {
+            //server.ServerUpdate();
 
-        server.ServerUpdateTo();
+            server.ServerUpdateTo();
+        }
     }
 
     private void LoadOver()
@@ -99,5 +102,7 @@ public class NewBehaviourScript : MonoBehaviour
         server.ServerSetCallBack(ServerCallBack);
 
         server.ServerStart(new List<int>() { 1, 2, 3, 4, 5 }, new List<int>() { 1, 2, 3, 4, 5 });
+
+        initOK = true;
     }
 }

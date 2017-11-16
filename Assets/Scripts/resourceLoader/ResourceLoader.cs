@@ -4,6 +4,7 @@ using System.IO;
 using gameObjectFactory;
 #if USE_ASSETBUNDLE
 using wwwManager;
+using assetManager;
 #endif
 
 public static class ResourceLoader
@@ -29,7 +30,13 @@ public static class ResourceLoader
     {
         callBack = _callBack;
 
+#if !USE_ASSETBUNDLE
+
         LoadConfig(ConfigLoadOver);
+
+#else
+        AssetManager.Instance.Init(ConfigLoadOver);
+#endif
     }
 
     private static void ConfigLoadOver()
