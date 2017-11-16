@@ -18,27 +18,42 @@ public class ControlUnit : MonoBehaviour, IPointerClickHandler, IPointerDownHand
 
     public void OnPointerClick(PointerEventData _data)
     {
-        core.OnPointerClick(this);
+        if (core != null)
+        {
+            core.OnPointerClick(this);
+        }
     }
 
     public void OnPointerDown(PointerEventData _data)
     {
-        core.OnPointerDown(this);
+        if (core != null)
+        {
+            core.OnPointerDown(this);
+        }
     }
 
     public void OnPointerEnter(PointerEventData _data)
     {
-        core.OnPointerEnter(this);
+        if (core != null)
+        {
+            core.OnPointerEnter(this);
+        }
     }
 
     public void OnPointerExit(PointerEventData _data)
     {
-        core.OnPointerExit(this);
+        if (core != null)
+        {
+            core.OnPointerExit(this);
+        }
     }
 
     public void OnPointerUp(PointerEventData _data)
     {
-        core.OnPointerUp(this);
+        if (core != null)
+        {
+            core.OnPointerUp(this);
+        }
     }
 
     public void SetSelected(bool _b)
