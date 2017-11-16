@@ -520,10 +520,22 @@ public class DishClientCore : MonoBehaviour, IClient
 
             if (lastSelectedUnit is SeatUnit)
             {
-                //send command
-                client.ChangeWorkerPos((lastSelectedUnit as SeatUnit).GetWorker().index, _seatUnit.index);
-
                 ClearSelectedUnitList();
+
+                if (_seatUnit.GetWorker() == null)
+                {
+                    //send command
+                    client.ChangeWorkerPos((lastSelectedUnit as SeatUnit).GetWorker().index, _seatUnit.index);
+                }
+                else
+                {
+                    if (_seatUnit.GetWorker() != null)
+                    {
+                        selectedUnitList.Add(_seatUnit);
+
+                        _seatUnit.SetSelected(true);
+                    }
+                }
             }
             else
             {

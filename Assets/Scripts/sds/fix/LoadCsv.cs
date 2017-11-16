@@ -16,6 +16,15 @@ public class LoadCsv {
             DishSDSDic.Add(unit.ID,unit);
         }
         dic.Add(typeof(DishSDS),DishSDSDic);
+        Dictionary<int,ResultSDS> ResultSDSDic = new Dictionary<int,ResultSDS>();
+        int lengthResultSDS = br.ReadInt32();
+        for(int i = 0 ; i < lengthResultSDS ; i++){
+            ResultSDS unit = new ResultSDS();
+            ResultSDS_c.Init(unit,br);
+            unit.Fix();
+            ResultSDSDic.Add(unit.ID,unit);
+        }
+        dic.Add(typeof(ResultSDS),ResultSDSDic);
         br.Close();
         ms.Close();
         ms.Dispose();
