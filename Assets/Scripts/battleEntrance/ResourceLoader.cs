@@ -5,12 +5,14 @@ using gameObjectFactory;
 #if USE_ASSETBUNDLE
 using wwwManager;
 using assetManager;
+using assetBundleManager;
 #endif
 
 public static class ResourceLoader
 {
     private static string[] strs = new string[]
     {
+        "Assets/Resource/prefab/core.prefab",
         "Assets/Resource/prefab/dish.prefab",
         "Assets/Resource/prefab/dishResult.prefab",
         "Assets/Resource/prefab/playerDataUnit.prefab",
@@ -30,12 +32,26 @@ public static class ResourceLoader
     {
         callBack = _callBack;
 
-#if !USE_ASSETBUNDLE
+#if USE_ASSETBUNDLE
+
+        int num = 2;
+
+        Action dele = delegate ()
+        {
+            num--;
+
+            if (num == 0)
+            {
+                ConfigLoadOver();
+            }
+        };
+
+        LoadConfig(dele);
+
+        AssetManager.Instance.Init(dele);
+#else
 
         LoadConfig(ConfigLoadOver);
-
-#else
-        AssetManager.Instance.Init(ConfigLoadOver);
 #endif
     }
 
@@ -105,6 +121,10 @@ public static class ResourceLoader
 
     private static void PreloadPrefabs()
     {
+#if USE_ASSETBUNDLE
+        AssetBundleManager.Instance.Load("texture", null);
+#endif
+
         GameObjectFactory.Instance.PreloadGameObjects(strs, OneLoadOver);
     }
 
@@ -114,6 +134,8 @@ public static class ResourceLoader
 
         if (num == 0)
         {
+            GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/core.prefab", null);
+
             if (callBack != null)
             {
                 Action tmpCb = callBack;

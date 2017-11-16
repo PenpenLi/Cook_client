@@ -2,6 +2,7 @@
 using UnityEngine;
 using Cook_lib;
 using gameObjectFactory;
+using UnityEngine.UI;
 
 public class PlayerDataUnit : MonoBehaviour
 {
@@ -25,6 +26,9 @@ public class PlayerDataUnit : MonoBehaviour
 
     [SerializeField]
     private TrashContainer trashContainer;
+
+    [SerializeField]
+    private Text money;
 
     [HideInInspector]
     public DishResultContainer[] dishResultContainerArr = new DishResultContainer[CookConst.RESULT_STATE.Length];
@@ -96,6 +100,8 @@ public class PlayerDataUnit : MonoBehaviour
         Clear();
 
         playerData = _playerData;
+
+        money.text = playerData.money.ToString();
 
         List<DishData> dishDataList = playerData.dish;
 
@@ -255,5 +261,24 @@ public class PlayerDataUnit : MonoBehaviour
         {
             dish.DestroyDishResult();
         }
+    }
+
+    public void CompleteRequirement(CommandCompleteRequirement _command)
+    {
+        for (int i = 0; i < _command.resultList.Count; i++)
+        {
+            int index = _command.resultList[i];
+
+            if (index > -1)
+            {
+                dishResultContainerArr[index].Clear();
+            }
+            else
+            {
+                dishList[-index - 1].DestroyDishResult();
+            }
+        }
+
+        money.text = playerData.money.ToString();
     }
 }

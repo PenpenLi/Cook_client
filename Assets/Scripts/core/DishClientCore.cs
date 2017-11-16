@@ -3,33 +3,40 @@ using UnityEngine;
 using Cook_lib;
 using System;
 using System.Collections.Generic;
+using gameObjectFactory;
 
 public class DishClientCore : MonoBehaviour, IClient
 {
-    public static float MAX_TIME;
+    public static float MAX_TIME { private set; get; }
 
-    public static float TICK_SPAN;
+    public static float TICK_SPAN { private set; get; }
 
     [SerializeField]
     public Canvas canvas;
 
     [SerializeField]
-    private RequirementContainer requirementContainer;
-
-    [SerializeField]
-    private PlayerDataUnit mPlayerData;
-
-    [SerializeField]
-    private PlayerDataUnit oPlayerData;
-
-    [SerializeField]
     private Background bg;
+
+    [SerializeField]
+    private Transform mPlayerDataContainer;
+
+    [SerializeField]
+    private Transform oPlayerDataContainer;
+
+    [SerializeField]
+    private Transform requirementContainerContainer;
 
     private Cook_client client;
 
     private Action<MemoryStream> sendData;
 
     private Action<MemoryStream, Action<BinaryReader>> sendDataWithReply;
+
+    private RequirementContainer requirementContainer;
+
+    private PlayerDataUnit mPlayerData;
+
+    private PlayerDataUnit oPlayerData;
 
     public int tick
     {
@@ -39,11 +46,11 @@ public class DishClientCore : MonoBehaviour, IClient
         }
     }
 
-    public void Init(Action<MemoryStream> _sendData, Action<MemoryStream, Action<BinaryReader>> _sendDataWithReply)
-    {
-        sendData = _sendData;
+    public static DishClientCore Instance { private set; get; }
 
-        sendDataWithReply = _sendDataWithReply;
+    void Awake()
+    {
+        Instance = this;
 
         Dictionary<int, DishSDS> dic = StaticData.GetDic<DishSDS>();
 
@@ -63,17 +70,46 @@ public class DishClientCore : MonoBehaviour, IClient
 
         TICK_SPAN = 1.0f / CookConst.TICK_NUM_PER_SECOND;
 
+        Cook_client.Init(dic, StaticData.GetDic<ResultSDS>());
+
         client = new Cook_client();
 
         client.Init(this);
 
+        GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/playerDataUnit.prefab", null);
+
+        go.transform.SetParent(mPlayerDataContainer, false);
+
+        mPlayerData = go.GetComponent<PlayerDataUnit>();
+
         mPlayerData.Init(this, true);
 
+        go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/playerDataUnit.prefab", null);
+
+        go.transform.SetParent(oPlayerDataContainer, false);
+
+        oPlayerData = go.GetComponent<PlayerDataUnit>();
+
         oPlayerData.Init(this, false);
+
+        go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/requirementContainer.prefab", null);
+
+        go.transform.SetParent(requirementContainerContainer, false);
+
+        requirementContainer = go.GetComponent<RequirementContainer>();
 
         requirementContainer.Init(this, client.GetRequirement());
 
         bg.Init(this);
+
+        gameObject.SetActive(false);
+    }
+
+    public void Init(Action<MemoryStream> _sendData, Action<MemoryStream, Action<BinaryReader>> _sendDataWithReply)
+    {
+        sendData = _sendData;
+
+        sendDataWithReply = _sendDataWithReply;
     }
 
     public void RefreshData()
@@ -154,6 +190,8 @@ public class DishClientCore : MonoBehaviour, IClient
     {
         PlayerDataUnit unit = _command.isMine == client.clientIsMine ? mPlayerData : oPlayerData;
 
+        unit.CompleteRequirement(_command);
+
         for (int i = requirementContainer.containerList.Count - 1; i > -1; i--)
         {
             RequirementUnitContainer container = requirementContainer.containerList[i];
@@ -165,20 +203,6 @@ public class DishClientCore : MonoBehaviour, IClient
                 Destroy(container.gameObject);
 
                 break;
-            }
-        }
-
-        for (int i = 0; i < _command.resultList.Count; i++)
-        {
-            int index = _command.resultList[i];
-
-            if (index > -1)
-            {
-                unit.dishResultContainerArr[index].Clear();
-            }
-            else
-            {
-                unit.dishList[-index - 1].DestroyDishResult();
             }
         }
     }
