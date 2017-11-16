@@ -43,4 +43,12 @@ public class DragUnit : MonoBehaviour
 
         copy = null;
     }
+
+    void OnDestroy()
+    {
+        if (copy != null)
+        {
+            Destroy(copy);
+        }
+    }
 }

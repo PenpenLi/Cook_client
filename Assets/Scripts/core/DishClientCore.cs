@@ -154,11 +154,19 @@ public class DishClientCore : MonoBehaviour, IClient
     {
         PlayerDataUnit unit = _command.isMine == client.clientIsMine ? mPlayerData : oPlayerData;
 
-        RequirementUnitContainer container = requirementContainer.dic[_command.requirementUid];
+        for (int i = requirementContainer.containerList.Count - 1; i > -1; i--)
+        {
+            RequirementUnitContainer container = requirementContainer.containerList[i];
 
-        requirementContainer.dic.Remove(_command.requirementUid);
+            if (container.requirement.uid == _command.requirementUid)
+            {
+                requirementContainer.containerList.RemoveAt(i);
 
-        Destroy(container.gameObject);
+                Destroy(container.gameObject);
+
+                break;
+            }
+        }
 
         for (int i = 0; i < _command.resultList.Count; i++)
         {
