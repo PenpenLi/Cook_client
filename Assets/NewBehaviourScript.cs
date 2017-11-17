@@ -97,15 +97,10 @@ public class NewBehaviourScript : MonoBehaviour
     {
         Cook_server.Init(StaticData.GetDic<DishSDS>(), StaticData.GetDic<ResultSDS>());
 
-        server.ServerSetCallBack(ServerCallBack, BattleOver);
+        server.ServerSetCallBack(ServerCallBack);
 
         server.ServerStart(new List<int>() { 1, 2, 3, 4, 5 }, new List<int>() { 1, 2, 3, 4, 5 });
 
         initOK = true;
-    }
-
-    private void BattleOver(GameResult _gameResult)
-    {
-
     }
 }

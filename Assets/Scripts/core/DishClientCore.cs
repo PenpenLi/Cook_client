@@ -221,7 +221,7 @@ public class DishClientCore : MonoBehaviour, IClient
         }
     }
 
-    public void UpdateCallBack()
+    public void UpdateCallBack(GameResult _gameResult)
     {
         mPlayerData.UpdateCallBack();
 
@@ -798,10 +798,5 @@ public class DishClientCore : MonoBehaviour, IClient
     private void ClickTrashContainer()
     {
         ClearSelectedUnitList();
-    }
-
-    public void BattleOver(GameResult _gameResult)
-    {
-
     }
 }
