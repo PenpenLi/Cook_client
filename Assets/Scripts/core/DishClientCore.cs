@@ -59,6 +59,8 @@ public class DishClientCore : MonoBehaviour, IClient
     {
         Instance = this;
 
+        Log.Init(Debug.Log);
+
         Dictionary<int, DishSDS> dic = StaticData.GetDic<DishSDS>();
 
         IEnumerator<DishSDS> enumerator = dic.Values.GetEnumerator();
@@ -529,6 +531,11 @@ public class DishClientCore : MonoBehaviour, IClient
             {
                 StartDrag();
             }
+        }
+
+        if (Input.GetKeyUp(KeyCode.F5))
+        {
+            RequestRefreshData();
         }
     }
 
