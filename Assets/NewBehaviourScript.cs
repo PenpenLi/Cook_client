@@ -6,10 +6,6 @@ using System;
 
 public class NewBehaviourScript : MonoBehaviour
 {
-
-    [SerializeField]
-    private DishClientCore core;
-
     private Cook_server server = new Cook_server();
 
     private bool initOK = false;
@@ -34,7 +30,7 @@ public class NewBehaviourScript : MonoBehaviour
             {
                 using (BinaryReader br = new BinaryReader(_ms))
                 {
-                    core.GetPackage(br);
+                    DishClientCore.Instance.GetPackage(br);
                 }
             }
             else
@@ -66,9 +62,11 @@ public class NewBehaviourScript : MonoBehaviour
 
         ServerStart();
 
-        core.Init(SendData, SendDataWithReply);
+        DishClientCore.Instance.Init(SendData, SendDataWithReply);
 
-        core.RequestRefreshData();
+        DishClientCore.Instance.RequestRefreshData();
+
+        DishClientCore.Instance.gameObject.SetActive(true);
     }
 
     private void SendData(MemoryStream _ms)

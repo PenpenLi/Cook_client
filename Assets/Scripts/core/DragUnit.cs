@@ -16,7 +16,7 @@ public class DragUnit : MonoBehaviour
     {
         copy = Instantiate(gameObject);
 
-        copy.transform.SetParent(core.transform, false);
+        copy.transform.SetParent(core.canvas.transform, false);
 
         (copy.transform as RectTransform).anchoredPosition = PublicTools.MousePositionToCanvasPosition(core.canvas, Input.mousePosition);
 
