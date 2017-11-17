@@ -799,4 +799,9 @@ public class DishClientCore : MonoBehaviour, IClient
     {
         ClearSelectedUnitList();
     }
+
+    public void BattleOver(GameResult _gameResult)
+    {
+
+    }
 }
