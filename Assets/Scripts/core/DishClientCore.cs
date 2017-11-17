@@ -241,7 +241,10 @@ public class DishClientCore : MonoBehaviour, IClient
 
     public void GetPackage(BinaryReader _br)
     {
-        client.ClientGetPackage(_br);
+        if (isInit)
+        {
+            client.ClientGetPackage(_br);
+        }
     }
 
     public void RequestRefreshData()
