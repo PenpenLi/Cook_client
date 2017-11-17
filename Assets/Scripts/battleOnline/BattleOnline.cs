@@ -96,12 +96,12 @@ public class BattleOnline : MonoBehaviour
 
                 container.SetActive(false);
 
-                //if (!BattleManager.Instance.gameObject.activeSelf)
-                //{
-                //    SuperFunction.Instance.AddOnceEventListener(BattleManager.Instance.gameObject, BattleManager.BATTLE_START, BattleStart);
+                if (!DishClientCore.Instance.gameObject.activeSelf)
+                {
+                    SuperFunction.Instance.AddOnceEventListener(DishClientCore.Instance.gameObject, DishClientCore.BATTLE_START, BattleStart);
 
-                //    BattleManager.Instance.RequestRefreshData();
-                //}
+                    DishClientCore.Instance.RequestRefreshData();
+                }
 
                 break;
 
@@ -137,9 +137,9 @@ public class BattleOnline : MonoBehaviour
 
     private void BattleStart(int _index)
     {
-        //SuperFunction.Instance.AddOnceEventListener(BattleManager.Instance.gameObject, BattleManager.BATTLE_QUIT, BattleOver);
+        SuperFunction.Instance.AddOnceEventListener(DishClientCore.Instance.gameObject, DishClientCore.BATTLE_OVER, BattleOver);
 
-        //BattleManager.Instance.gameObject.SetActive(true);
+        DishClientCore.Instance.gameObject.SetActive(true);
     }
 
     public void EnterPVP()

@@ -4,12 +4,19 @@ using Cook_lib;
 using System;
 using System.Collections.Generic;
 using gameObjectFactory;
+using superFunction;
 
 public class DishClientCore : MonoBehaviour, IClient
 {
+    public const string BATTLE_START = "battleStart";
+
+    public const string BATTLE_OVER = "battleOver";
+
     public static float MAX_TIME { private set; get; }
 
     public static float TICK_SPAN { private set; get; }
+
+    public static DishClientCore Instance { private set; get; }
 
     [SerializeField]
     public Canvas canvas;
@@ -46,7 +53,7 @@ public class DishClientCore : MonoBehaviour, IClient
         }
     }
 
-    public static DishClientCore Instance { private set; get; }
+    private bool isInit = false;
 
     void Awake()
     {
@@ -114,6 +121,13 @@ public class DishClientCore : MonoBehaviour, IClient
 
     public void RefreshData()
     {
+        if (!isInit)
+        {
+            isInit = true;
+
+            SuperFunction.Instance.DispatchEvent(gameObject, BATTLE_START);
+        }
+
         Clear();
 
         PlayerData playerData = client.GetPlayerData(client.clientIsMine);
