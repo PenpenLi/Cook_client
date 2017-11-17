@@ -228,6 +228,11 @@ public class DishClientCore : MonoBehaviour, IClient
         oPlayerData.UpdateCallBack();
 
         requirementContainer.UpdateCallBack();
+
+        if (_gameResult != GameResult.NOT_OVER)
+        {
+            Debug.Log("game over:" + _gameResult);
+        }
     }
 
     private void Clear()
