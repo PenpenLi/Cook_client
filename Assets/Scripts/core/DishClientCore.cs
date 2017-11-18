@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using gameObjectFactory;
 using superFunction;
+using UnityEngine.UI;
 
 public class DishClientCore : MonoBehaviour, IClient
 {
@@ -32,6 +33,9 @@ public class DishClientCore : MonoBehaviour, IClient
 
     [SerializeField]
     private Transform requirementContainerContainer;
+
+    [SerializeField]
+    private Text timeText;
 
     private Cook_client client;
 
