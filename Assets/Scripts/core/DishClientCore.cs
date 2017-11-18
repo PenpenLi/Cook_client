@@ -145,6 +145,8 @@ public class DishClientCore : MonoBehaviour, IClient
         oPlayerData.RefreshData(playerData);
 
         requirementContainer.RefreshData();
+
+        RefreshTime();
     }
 
     public void SendData(MemoryStream _ms)
@@ -239,6 +241,15 @@ public class DishClientCore : MonoBehaviour, IClient
         {
             Debug.Log("game over:" + _gameResult);
         }
+        else
+        {
+            RefreshTime();
+        }
+    }
+
+    private void RefreshTime()
+    {
+        timeText.text = ((int)(CookConst.MAX_TIME - client.GetTick() / CookConst.TICK_NUM_PER_SECOND)).ToString();
     }
 
     private void Clear()

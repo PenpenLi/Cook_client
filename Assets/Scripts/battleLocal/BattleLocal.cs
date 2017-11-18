@@ -1,23 +1,28 @@
 ﻿using System.IO;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 using Cook_lib;
-using System;
+using System.Collections.Generic;
 
-public class NewBehaviourScript : MonoBehaviour
+public class BattleLocal : MonoBehaviour
 {
+    public static BattleLocal Instance { private set; get; }
+
     private Cook_server server = new Cook_server();
 
-    private bool initOK = false;
+    private Action<BinaryReader> clientCallBack;
 
-    // Use this for initialization
     void Awake()
     {
-        Log.Init(Debug.Log);
+        Instance = this;
 
-        Time.fixedDeltaTime = (float)1 / CookConst.TICK_NUM_PER_SECOND;
+        server = new Cook_server();
 
-        ResourceLoader.Load(LoadOver);
+        server.ServerSetCallBack(ServerCallBack);
+
+        Time.fixedDeltaTime = 1f / CookConst.TICK_NUM_PER_SECOND;
+
+        gameObject.SetActive(false);
     }
 
     private void ServerCallBack(bool _isMine, bool _isPush, MemoryStream _ms)
@@ -35,40 +40,15 @@ public class NewBehaviourScript : MonoBehaviour
             }
             else
             {
-                if (tmpCB != null)
+                if (clientCallBack != null)
                 {
                     using (BinaryReader br = new BinaryReader(_ms))
                     {
-                        tmpCB(br);
+                        clientCallBack(br);
                     }
                 }
             }
         }
-    }
-
-    void FixedUpdate()
-    {
-        if (initOK)
-        {
-            //server.ServerUpdate();
-
-            GameResult gameResult = server.ServerUpdateTo();
-
-
-        }
-    }
-
-    private void LoadOver()
-    {
-        Debug.Log("loadover");
-
-        ServerStart();
-
-        DishClientCore.Instance.Init(SendData, SendDataWithReply);
-
-        DishClientCore.Instance.RequestRefreshData();
-
-        DishClientCore.Instance.gameObject.SetActive(true);
     }
 
     private void SendData(MemoryStream _ms)
@@ -81,11 +61,9 @@ public class NewBehaviourScript : MonoBehaviour
         }
     }
 
-    private Action<BinaryReader> tmpCB;
-
     private void SendDataWithReply(MemoryStream _ms, Action<BinaryReader> _callBack)
     {
-        tmpCB = _callBack;
+        clientCallBack = _callBack;
 
         _ms.Position = 0;
 
@@ -95,14 +73,28 @@ public class NewBehaviourScript : MonoBehaviour
         }
     }
 
-    private void ServerStart()
+    public void ServerStart()
     {
-        Cook_server.Init(StaticData.GetDic<DishSDS>(), StaticData.GetDic<ResultSDS>());
+        gameObject.SetActive(true);
 
-        server.ServerSetCallBack(ServerCallBack);
+        Cook_server.Init(StaticData.GetDic<DishSDS>(), StaticData.GetDic<ResultSDS>());
 
         server.ServerStart(new List<int>() { 1, 2, 3, 4, 5 }, new List<int>() { 1, 2, 3, 4, 5 });
 
-        initOK = true;
+        DishClientCore.Instance.Init(SendData, SendDataWithReply);
+
+        DishClientCore.Instance.RequestRefreshData();
+
+        DishClientCore.Instance.gameObject.SetActive(true);
+    }
+
+    void FixedUpdate()
+    {
+        GameResult gameResult = server.ServerUpdateTo();
+
+        if (gameResult != GameResult.NOT_OVER)
+        {
+            gameObject.SetActive(false);
+        }
     }
 }

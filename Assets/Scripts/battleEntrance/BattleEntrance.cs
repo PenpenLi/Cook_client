@@ -34,7 +34,7 @@ public class BattleEntrance : MonoBehaviour
     {
         container.SetActive(false);
 
-        //BattleLocal.Instance.Start();
+        BattleLocal.Instance.ServerStart();
     }
 
     public void Show()
